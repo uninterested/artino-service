@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 public class RequestInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
-        String token = request.getHeader("token");
+        String token = request.getHeader("X-Token");
         Long userId;
         if (StringUtils.isEmpty(token)) userId = null;
         else {

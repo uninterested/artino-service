@@ -11,7 +11,7 @@ public class IDUtils {
     //代表一毫秒内生成的多个id的最新序号  12位 4096 -1 = 4095 个
     private long sequence;
     //设置一个时间初始值    2^41 - 1   差不多可以用69年
-    private long twepoch = 1585644268888L;
+    private long twepoch = 1704067200000L;
     //5位的机器id
     private long workerIdBits = 5L;
     //5位的机房id
