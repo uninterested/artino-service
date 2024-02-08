@@ -31,6 +31,7 @@ public class CodeServiceImpl implements ICodeService {
     private CodeMapper codeMapper;
 
     @Autowired
+    @Lazy
     private AdminServiceBase adminServiceBase;
 
     @Override
