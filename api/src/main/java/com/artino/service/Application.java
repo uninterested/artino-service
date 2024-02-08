@@ -1,15 +1,17 @@
 package com.artino.service;
 
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.artino.service.utils.DateUtils;
-import com.artino.service.utils.IDUtils;
-
+@SpringBootApplication
+@MapperScan(value = "com.artino.service.mapper")
 public class Application {
 
     public static void main(String[] args) {
-        for (int i =0; i < 10; i++) {
-            System.out.println("x:" + IDUtils.shared().nextId());
-        }
-        System.out.println(DateUtils.getTime());
+        SpringApplication.run(Application.class, args);
     }
 }

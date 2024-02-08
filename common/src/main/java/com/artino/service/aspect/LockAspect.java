@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Order(0)
 public class LockAspect {
-    @Around("@annotation(com.pandora.box.annotation.Lock)")
+    @Around("@annotation(com.artino.service.annotation.Lock)")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         Lock lock = method.getAnnotation(Lock.class);

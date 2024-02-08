@@ -55,10 +55,12 @@ logging:
             sys: debug
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    default-enum-type-handler: com.artino.service.config.EnumStatusHandler
 constant:
   code:
     verify: 5  #验证次数
-    expired: 3 #分钟
+    expired: 5 #分钟
   login:
     times: 5 #登录错误次数锁定
     single: 0 #是否单点登录 0:不是 1:是

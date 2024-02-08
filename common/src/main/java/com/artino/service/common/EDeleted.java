@@ -4,15 +4,15 @@ import com.artino.service.base.R;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum EYesNo implements R.IBaseEnum {
-    YES("YES", 0),
-    NO("NO", 1);
+public enum EDeleted implements R.IBaseEnum {
+    NO("NO", 0),
+    YES("NO", 1);
 
     @JsonValue
     private final Integer value;
     private final String label;
 
-    EYesNo(String label, Integer value) {
+    EDeleted(String label, Integer value) {
         this.value = value;
         this.label = label;
     }
@@ -23,8 +23,8 @@ public enum EYesNo implements R.IBaseEnum {
     }
 
     @JsonCreator
-    public static EYesNo getItem (Integer val){
-        for (EYesNo value : values())
+    public static EDeleted getItem (Integer val){
+        for (EDeleted value : values())
             if (value.value.equals(val))
                 return value;
         return null;

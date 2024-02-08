@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artino.service.mapper.CodeMapper">
+    <resultMap id="TCodeMap" type="com.artino.service.entity.TCode">
+        <result property="id" column="id" />
+        <result property="account" column="account" />
+        <result property="code" column="code" />
+        <result property="type" column="type" />
+        <result property="verified" column="verified" />
+        <result property="createdAt" column="created_at" />
+        <result property="expiredAt" column="expired_at" />
+    </resultMap>
+    <sql id="queryAll">
+        select * from t_code
+    </sql>
+    <sql id="whereWithCondition">
+        <where>
+            1=1
+            <if test="id != null">and `id` = #{id}</if>
+            <if test="account != null">and `account` = #{account}</if>
+            <if test="code != null">and `code` = #{code}</if>
+            <if test="type != null">and `type` = #{type}</if>
+            <if test="verified != null">and `verified` = #{verified}</if>
+            <if test="createdAt != null">and `created_at` = #{createdAt}</if>
+            <if test="expiredAt != null">and `expired_at` = #{expiredAt}</if>
+        </where>
+    </sql>
+    <insert id="insert" parameterType="com.artino.service.entity.TCode">
+        insert into t_code (
+        <trim suffix="" suffixOverrides=",">
+            <if test="id != null">`id`,</if>
+            <if test="account != null">`account`,</if>
+            <if test="code != null">`code`,</if>
+            <if test="type != null">`type`,</if>
+            <if test="verified != null">`verified`,</if>
+            <if test="createdAt != null">`created_at`,</if>
+            <if test="expiredAt != null">`expired_at`,</if>
+        </trim>
+        ) values (
+        <trim suffix="" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="account != null">#{account},</if>
+            <if test="code != null">#{code},</if>
+            <if test="type != null">#{type},</if>
+            <if test="verified != null">#{verified},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="expiredAt != null">#{expiredAt},</if>
+        </trim>
+        )
+    </insert>
+    <update id="update" parameterType="com.artino.service.entity.TCode">
+        update t_code
+        <set>
+            <trim suffix="" suffixOverrides=",">
+                id = #{id},
+                <if test="account != null">`account` = #{account},</if>
+                <if test="code != null">`code` = #{code},</if>
+                <if test="type != null">`type` = #{type},</if>
+                <if test="verified != null and verified != 0">`verified` = #{verified},</if>
+                <if test="createdAt != null">`created_at` = #{createdAt},</if>
+                <if test="expiredAt != null">`expired_at` = #{expiredAt},</if>
+            </trim>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="findList" parameterType="com.artino.service.entity.TCode" resultMap="TCodeMap">
+        <include refid="queryAll" />
+        <include refid="whereWithCondition" />
+    </select>
+    <select id="findOne" parameterType="com.artino.service.entity.TCode" resultMap="TCodeMap">
+        <include refid="queryAll" />
+        <include refid="whereWithCondition" />
+        limit 0,1
+    </select>
+    <select id="findListWith" parameterType="List" resultMap="TCodeMap">
+        <include refid="queryAll" />
+        <where>
+            <if test="list != null and list.size() > 0">
+                and `id` in
+                <foreach collection="list" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="findNewestOne" parameterType="com.artino.service.entity.TCode" resultMap="TCodeMap">
+        <include refid="queryAll" />
+        <include refid="whereWithCondition" />
+        order by `id` desc limit 0,1
+    </select>
+</mapper>

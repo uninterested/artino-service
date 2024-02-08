@@ -13,10 +13,7 @@ public class XssValidator implements ConstraintValidator<Xss, String>
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext)
     {
-        if (StringUtils.isBlank(value))
-        {
-            return true;
-        }
+        if (StringUtils.isBlank(value)) return true;
         return !containsHtml(value);
     }
 
