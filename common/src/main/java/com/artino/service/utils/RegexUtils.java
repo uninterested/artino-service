@@ -22,8 +22,8 @@ public class RegexUtils {
     /**
      * 是不是email
      *
-     * @param email
-     * @return
+     * @param email 邮箱字符串
+     * @return YES / NO
      */
     public static boolean isEmail(String email) {
         if (null == email) return false;

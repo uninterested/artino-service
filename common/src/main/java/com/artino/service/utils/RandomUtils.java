@@ -51,15 +51,6 @@ public class RandomUtils {
     }
 
     /**
-     * 获取UUID
-     *
-     * @return
-     */
-    public static String getUUid() {
-        return UUID.randomUUID().toString();
-    }
-
-    /**
      * 随机生成中文名
      * @param len
      * @return

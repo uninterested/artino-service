@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artino.service.mapper.AdminMapper">
+    <resultMap id="TAdminMap" type="com.artino.service.entity.TAdmin">
+        <result property="id" column="id" />
+        <result property="nickName" column="nick_name" />
+        <result property="email" column="email" />
+        <result property="phone" column="phone" />
+        <result property="sex" column="sex" />
+        <result property="avatar" column="avatar" />
+        <result property="password" column="password" />
+        <result property="balance" column="balance" />
+        <result property="openId" column="open_id" />
+        <result property="unionId" column="union_id" />
+        <result property="remark" column="remark" />
+        <result property="createdAt" column="created_at" />
+        <result property="createdBy" column="created_by" />
+        <result property="status" column="status" />
+        <result property="deleted" column="deleted" />
+    </resultMap>
+    <sql id="queryAll">
+        select * from t_admin
+    </sql>
+    <sql id="whereWithCondition">
+        <where>
+            1=1
+            <if test="id != null">and `id` = #{id}</if>
+            <if test="nickName != null">and `nick_name` = #{nickName}</if>
+            <if test="email != null">and `email` = #{email}</if>
+            <if test="phone != null">and `phone` = #{phone}</if>
+            <if test="sex != null">and `sex` = #{sex}</if>
+            <if test="avatar != null">and `avatar` = #{avatar}</if>
+            <if test="password != null">and `password` = #{password}</if>
+            <if test="balance != null">and `balance` = #{balance}</if>
+            <if test="openId != null">and `open_id` = #{openId}</if>
+            <if test="unionId != null">and `union_id` = #{unionId}</if>
+            <if test="remark != null">and `remark` = #{remark}</if>
+            <if test="createdAt != null">and `created_at` = #{createdAt}</if>
+            <if test="createdBy != null">and `created_by` = #{createdBy}</if>
+            <if test="status != null">and `status` = #{status}</if>
+            and `deleted` = 0
+        </where>
+    </sql>
+    <insert id="insert" parameterType="com.artino.service.entity.TAdmin">
+        insert into t_admin (
+        <trim suffix="" suffixOverrides=",">
+            <if test="id != null">`id`,</if>
+            <if test="nickName != null">`nick_name`,</if>
+            <if test="email != null">`email`,</if>
+            <if test="phone != null">`phone`,</if>
+            <if test="sex != null">`sex`,</if>
+            <if test="avatar != null">`avatar`,</if>
+            <if test="password != null">`password`,</if>
+            <if test="balance != null">`balance`,</if>
+            <if test="openId != null">`open_id`,</if>
+            <if test="unionId != null">`union_id`,</if>
+            <if test="remark != null">`remark`,</if>
+            <if test="createdAt != null">`created_at`,</if>
+            <if test="createdBy != null">`created_by`,</if>
+            <if test="status != null">`status`,</if>
+            <if test="deleted != null">`deleted`,</if>
+        </trim>
+        ) values (
+        <trim suffix="" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="email != null">#{email},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="password != null">#{password},</if>
+            <if test="balance != null">#{balance},</if>
+            <if test="openId != null">#{openId},</if>
+            <if test="unionId != null">#{unionId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="status != null">#{status},</if>
+            <if test="deleted != null">#{deleted},</if>
+        </trim>
+        )
+    </insert>
+    <update id="update" parameterType="com.artino.service.entity.TAdmin">
+        update t_admin
+        <set>
+            <trim suffix="" suffixOverrides=",">
+                id = #{id},
+                <if test="account != null">`account` = #{account},</if>
+                <if test="nickName != null">`nick_name` = #{nickName},</if>
+                <if test="email != null">`email` = #{email},</if>
+                <if test="phone != null">`phone` = #{phone},</if>
+                <if test="sex != null">`sex` = #{sex},</if>
+                <if test="avatar != null">`avatar` = #{avatar},</if>
+                <if test="password != null">`password` = #{password},</if>
+                <if test="balance != null">`balance` = #{balance},</if>
+                <if test="openId != null">`open_id` = #{openId},</if>
+                <if test="unionId != null">`union_id` = #{unionId},</if>
+                <if test="remark != null">`remark` = #{remark},</if>
+                <if test="createdAt != null">`created_at` = #{createdAt},</if>
+                <if test="createdBy != null">`created_by` = #{createdBy},</if>
+                <if test="status != null">`status` = #{status},</if>
+                <if test="deleted != null">`deleted` = #{deleted},</if>
+            </trim>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="findList" parameterType="com.artino.service.entity.TAdmin" resultMap="TAdminMap">
+        <include refid="queryAll" />
+        <include refid="whereWithCondition" />
+    </select>
+    <select id="findOne" parameterType="com.artino.service.entity.TAdmin" resultMap="TAdminMap">
+        <include refid="queryAll" />
+        <include refid="whereWithCondition" />
+        limit 0,1
+    </select>
+    <select id="findListWith" parameterType="List" resultMap="TAdminMap">
+        <include refid="queryAll" />
+        <where>
+            and `deleted` = 0
+            <if test="list != null and list.size() > 0">
+                and `id` in
+                <foreach collection="list" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

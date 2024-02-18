@@ -21,7 +21,7 @@ import java.util.*;
 @Aspect
 @Component
 public class FrequencyAspect {
-    @Before(value = "@annotation(com.artino.artino.annotation.Frequency)||@annotation(com.artino.artino.annotation.FrequencyGroup)")
+    @Before(value = "@annotation(com.artino.service.annotation.Frequency)||@annotation(com.artino.service.annotation.FrequencyGroup)")
     public void doBefore(JoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         Frequency[] frequencies = method.getAnnotationsByType(Frequency.class);

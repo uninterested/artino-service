@@ -2,11 +2,9 @@ package com.artino.service.interceptor;
 
 import com.artino.service.context.RequestContext;
 import com.artino.service.context.RequestInfo;
-import com.artino.service.utils.IpUtils;
-import com.artino.service.utils.KeyUtils;
-import com.artino.service.utils.RedisUtils;
-import com.artino.service.utils.StringUtils;
+import com.artino.service.utils.*;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 public class RequestInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
-        String token = request.getHeader("token");
+        Environment env = SpringUtils.getBean(Environment.class);
+        String tokenName = env.getProperty("constant.login.token", "X-Token");
+        String token = request.getHeader(tokenName);
         Long userId;
         if (StringUtils.isEmpty(token)) userId = null;
         else {
@@ -31,7 +31,7 @@ public class RequestInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler, Exception ex) throws Exception {
         RequestContext.remove();
     }
 }

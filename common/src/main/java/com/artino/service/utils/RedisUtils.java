@@ -1,7 +1,5 @@
 package com.artino.service.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.*;
@@ -11,6 +9,8 @@ import org.springframework.data.redis.core.script.RedisScript;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+
 public class RedisUtils {
     private final static StringRedisTemplate stringRedisTemplate;
     static {

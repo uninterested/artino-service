@@ -196,8 +196,13 @@ public class DateUtils {
      */
     public static Date after(int miniuts) {
         long currentTime = System.currentTimeMillis();
-        currentTime += miniuts * 60 * 1000;
+        currentTime += (long) miniuts * 60 * 1000;
         return new Date(currentTime);
+    }
+
+    public static Date after(String time, int miniuts) {
+        long ts = parseDate(time).getTime();
+        return new Date(ts + (long) miniuts * 60 * 1000);
     }
 
     public static long timespan(Date date) {

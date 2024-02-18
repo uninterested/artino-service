@@ -77,12 +77,22 @@ public class CryptoUtils {
         try {
             secretBytes = MessageDigest.getInstance("md5").digest(bytes);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            //
         }
-        String md5code = new BigInteger(1, secretBytes).toString(16);
-        for (int i = 0; i < 32 - md5code.length(); i++) md5code = "0" + md5code;
-        if (origin)  return md5code;
-        return md5code.toLowerCase();
+        StringBuilder md5code = null;
+        if (secretBytes != null) {
+            md5code = new StringBuilder(new BigInteger(1, secretBytes).toString(16));
+        }
+        if (md5code != null) {
+            for (int i = 0; i < 32 - md5code.length(); i++) md5code.insert(0, "0");
+        }
+        if (origin) if (md5code != null) {
+            return md5code.toString();
+        }
+        if (md5code != null) {
+            return md5code.toString().toLowerCase();
+        }
+        return null;
     }
 
 
@@ -92,7 +102,7 @@ public class CryptoUtils {
      * @param id 用户id
      * @return
      */
-    public static String encryptPassword(final String password, final long id) {
+    public static String encryptPassword(final String password, final Long id) {
         String pwd = String.format("%s%d", password, id);
         return md5Encode(pwd);
     }
