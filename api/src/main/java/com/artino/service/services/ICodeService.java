@@ -1,6 +1,7 @@
 package com.artino.service.services;
 
 import com.artino.service.dto.code.SendCodeDTO;
+import com.artino.service.dto.code.VerifyCodeDTO;
 
 public interface ICodeService {
     /**

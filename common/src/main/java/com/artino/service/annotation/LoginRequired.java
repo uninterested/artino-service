@@ -16,6 +16,7 @@ public @interface LoginRequired {
     UserType type() default UserType.USER;
 
     enum UserType {
-        ADMIN, USER
+        ADMIN,
+        USER
     }
 }

@@ -58,9 +58,15 @@ mybatis:
   configuration:
     default-enum-type-handler: com.artino.service.config.EnumStatusHandler
 constant:
+  verify:
+    status: false # 是否校验请求参数，防止被串改
+    key: iosuhdiofhpoiahdso # 校验请求是否被修改的key
+  remote:
+    host: http://127.0.0.1:8080/file
   code:
     verify: 5  #验证次数
     expired: 5 #分钟
   login:
+    token: X-Token #token name
     times: 5 #登录错误次数锁定
-    single: 0 #是否单点登录 0:不是 1:是
+    single: false #是否单点登录 0:不是 1:是

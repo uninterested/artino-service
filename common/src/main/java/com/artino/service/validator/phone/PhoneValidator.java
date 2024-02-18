@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class PhoneValidator implements ConstraintValidator<Phone, String>
 {
-    private static final String HTML_PATTERN = "^(?:(?:\\+|00)86)?1(?:3\\d|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8\\d)|(?:9[1589]))\\d{8}$";
+    private static final String PHONE_PATTERN = "(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8}$";
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext)
@@ -19,7 +19,7 @@ public class PhoneValidator implements ConstraintValidator<Phone, String>
 
     public static boolean containsHtml(String value)
     {
-        Pattern pattern = Pattern.compile(HTML_PATTERN);
+        Pattern pattern = Pattern.compile(PHONE_PATTERN);
         Matcher matcher = pattern.matcher(value);
         return matcher.matches();
     }

@@ -10,16 +10,16 @@ public class R<T> {
     private final String message;
     private final T data;
 
-    public static R<Object> success() {
+    public static<T> R<T> success() {
         return R.success(null);
     }
 
-    public static R<Object> success(Object data) {
-        return new R<Object>(200, null, data);
+    public static<T> R<T> success(T data) {
+        return new R<T>(200, null, data);
     }
 
-    public static R<Object> error(int code, String message) {
-        return new R(code, message, null);
+    public static<T> R<T> error(int code, String message) {
+        return new R<>(code, message, null);
     }
 
     private R(int code) {

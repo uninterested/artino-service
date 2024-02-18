@@ -15,9 +15,9 @@ import java.util.Objects;
 public class CodeServiceBase {
 
 
-    @Value("${config.code.verify}")
+    @Value("${constant.code.verify}")
     private int verify;
-    @Value("${config.code.expired}")
+    @Value("${constant.code.expired}")
     private int expired;
 
     @Autowired
@@ -27,35 +27,34 @@ public class CodeServiceBase {
     /**
      * 检测验证码是否有效
      *
-     * @param dto
-     * @return
+     * @param dto -> account / type / code
      */
-    public boolean verifyCode(TCode dto) {
+    public void verifyCode(TCode dto) {
         TCode code = codeMapper.findNewestOne(
-                TCode.builder().code(dto.getCode()).build()
+                TCode.builder()
+                        .account(dto.getAccount())
+                        .type(dto.getType())
+                        .build()
         );
         if (Objects.isNull(code))
             throw BusinessException.build(100002, "请先发送验证码");
         long now = DateUtils.timeSpan();
         long expiredAt = DateUtils.timespan(DateUtils.parseDate(code.getExpiredAt()));
-        if (code.getVerified() > expired || expiredAt > now)
+        if (code.getVerified() > expired || expiredAt < now)
             throw BusinessException.build(100003, "验证码已失效或已使用，请重新发送");
         if (!code.getCode().equals(dto.getCode())) {
-            codeMapper.update(
-                    TCode.builder()
-                            .id(code.getId())
-                            .verified(code.getVerified() + 1)
-                            .build()
-            );
-            return false;
+            TCode model = TCode.builder()
+                    .id(code.getId())
+                    .verified(code.getVerified() + 1)
+                    .build();
+            codeMapper.update(model);
+            throw BusinessException.build(100004, "验证码与手机号不匹配");
         } else {
-            codeMapper.update(
-                    TCode.builder()
-                            .id(code.getId())
-                            .verified(verify + 1)
-                            .build()
-            );
-            return true;
+            TCode model = TCode.builder()
+                    .id(code.getId())
+                    .verified(verify + 1)
+                    .build();
+            codeMapper.update(model);
         }
     }
 }

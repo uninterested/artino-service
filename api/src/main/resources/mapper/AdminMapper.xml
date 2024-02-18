@@ -69,14 +69,14 @@
             <if test="sex != null">#{sex},</if>
             <if test="avatar != null">#{avatar},</if>
             <if test="password != null">#{password},</if>
-            <if test="balance != null">`balance`,</if>
-            <if test="openId != null">`open_id`,</if>
-            <if test="unionId != null">`union_id`,</if>
-            <if test="remark != null">`remark`,</if>
-            <if test="createdAt != null">`created_at`,</if>
-            <if test="createdBy != null">`created_by`,</if>
-            <if test="status != null">`status`,</if>
-            <if test="deleted != null">`deleted`,</if>
+            <if test="balance != null">#{balance},</if>
+            <if test="openId != null">#{openId},</if>
+            <if test="unionId != null">#{unionId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="status != null">#{status},</if>
+            <if test="deleted != null">#{deleted},</if>
         </trim>
         )
     </insert>

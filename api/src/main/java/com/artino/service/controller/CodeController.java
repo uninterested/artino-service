@@ -28,10 +28,9 @@ public class CodeController {
     @ApiOperation("发送验证码")
     @Frequency(type = Frequency.Type.FP, time = 60, count = 5)
     public R<?> sendCode(@Valid @RequestBody SendCodeVO vo) {
-        boolean ok = codeService.sendCode(
-                new SendCodeDTO(vo.getAccount(), vo.getType())
-        );
+        SendCodeDTO dto = SendCodeDTO.builder().account(vo.getAccount()).type(vo.getType()).build();
+        boolean ok = codeService.sendCode(dto);
         if (ok) return R.success();
-        return R.error(100001, "发送验证码失败");
+        return R.error(120001, "发送验证码失败");
     }
 }

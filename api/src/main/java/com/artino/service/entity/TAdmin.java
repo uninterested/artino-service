@@ -66,7 +66,7 @@ public class TAdmin {
     /**
      * 状态
      */
-    private EYesNo status;
+    private EStatus status;
     /**
      * 是否已删除
      */
@@ -108,6 +108,42 @@ public class TAdmin {
         public static ESex getItem(Integer value) {
             for (ESex sex: ESex.values())
                 if (sex.value.equals(value)) return sex;
+            return null;
+        }
+
+        @Override
+        public Integer getSelfValue() {
+            return value;
+        }
+    }
+
+    public static enum EStatus implements R.IBaseEnum {
+        /**
+         * 默认 (正常)
+         */
+        DEFAULT(0, "NORMAL"),
+        /**
+         * 被冻结
+         */
+        FREEZE(1, "FREEZE");
+        @JsonValue
+        private final Integer value;
+        private final String label;
+
+        EStatus(int value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+
+        @Override
+        public String toString() {
+            return this.label;
+        }
+
+        @JsonCreator
+        public static EStatus getItem(Integer value) {
+            for (EStatus status: EStatus.values())
+                if (status.value.equals(value)) return status;
             return null;
         }
 
