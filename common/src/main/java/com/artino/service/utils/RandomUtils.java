@@ -56,8 +56,9 @@ public class RandomUtils {
      * @return
      */
     public static String getChineseName(int len) {
+        if (len <= 0) len = new Random().nextInt(10000) % 3 + 1;
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < len; i++) {
             int hightPos, lowPos;
             Random random = new Random();
             hightPos = (176 + Math.abs(random.nextInt(39)));

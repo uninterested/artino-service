@@ -1,46 +1,44 @@
 package com.artino.service.mapper;
 
-import com.artino.service.entity.TCode;
+import com.artino.service.entity.TConfig;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface CodeMapper {
+public interface ConfigMapper {
     /**
      * 新增
      * @param entity entity
      * @return 影响的行数
      */
-    int insert(TCode entity);
+    int insert(TConfig entity);
+
     /**
      * 修改
      * @param entity entity
      * @return 影响的行数
      */
-    int update(TCode entity);
+    int update(TConfig entity);
+
     /**
      * 查询列表
      * @param entity entity
-     * @return 查询的数据
+     * @return list
      */
-    List<TCode> findList(TCode entity);
+    List<TConfig> findList(TConfig entity);
+
     /**
      * 查询一个model
      * @param entity entity
      * @return model
      */
-    TCode findOne(TCode entity);
+    TConfig findOne(TConfig entity);
+
     /**
-     * 获取指定的集合
+     * 查询列表
      * @param ids id list
-     * @return entity list
+     * @return list
      */
-    List<TCode> findListWith(List<Long> ids);
-    /**
-     * 查找最新的一个验证码
-     * @param entity entity
-     * @return model
-     */
-    TCode findNewestOne(TCode entity);
+    List<TConfig> findListWith(List<Long> ids);
 }

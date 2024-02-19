@@ -57,4 +57,28 @@ public class CodeServiceBase {
             codeMapper.update(model);
         }
     }
+
+    /**
+     * 新增验证码
+     * @param entity entity
+     * @return yes / no
+     */
+    public boolean newCode(TCode entity) {
+        return codeMapper.insert(entity) > 0;
+    }
+
+    /**
+     * 查询最新的发送的验证码的数据
+     * @param account 账号
+     * @param type 类型
+     * @return model
+     */
+    public TCode findCodeBy(String account, TCode.EType type) {
+        return codeMapper.findNewestOne(
+                TCode.builder()
+                        .account(account)
+                        .type(type)
+                        .build()
+        );
+    }
 }

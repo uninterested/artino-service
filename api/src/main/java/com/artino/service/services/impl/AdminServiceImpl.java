@@ -7,7 +7,6 @@ import com.artino.service.dto.admin.AdminCreateDTO;
 import com.artino.service.dto.admin.AdminLoginDTO;
 import com.artino.service.entity.TAdmin;
 import com.artino.service.entity.TCode;
-import com.artino.service.mapper.AdminMapper;
 import com.artino.service.services.IAdminService;
 import com.artino.service.services.base.AdminServiceBase;
 import com.artino.service.services.base.CodeServiceBase;
@@ -23,10 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class AdminServiceImpl implements IAdminService {
-
-    @Autowired
-    @Lazy
-    private AdminMapper adminMapper;
 
     @Autowired
     @Lazy
@@ -49,7 +44,7 @@ public class AdminServiceImpl implements IAdminService {
         if (adminExists) throw BusinessException.build(110003, "账号已被注册");
         TAdmin admin = TAdmin.builder()
                 .id(IDUtils.shared().nextId())
-                .nickName(StringUtils.isEmpty(dto.getNickName()) ? RandomUtils.getChineseName(3) : dto.getNickName())
+                .nickName(StringUtils.isEmpty(dto.getNickName()) ? RandomUtils.getChineseName(0) : dto.getNickName())
                 .openId(CryptoUtils.base64Encode(RandomUtils.uuid()))
                 .unionId(CryptoUtils.base64Encode(RandomUtils.uuid()))
                 .createdAt(DateUtils.getTime())
@@ -59,7 +54,7 @@ public class AdminServiceImpl implements IAdminService {
         if (isEmail) admin.setEmail(dto.getAccount());
         else admin.setPhone(dto.getAccount());
         admin.setPassword(CryptoUtils.encryptPassword(dto.getPassword(), admin.getId()));
-        return adminMapper.insert(admin) > 0;
+        return adminServiceBase.newAdmin(admin);
     }
 
     @Override
@@ -105,7 +100,7 @@ public class AdminServiceImpl implements IAdminService {
         if (Objects.isNull(admin)) {
             admin = TAdmin.builder()
                     .id(IDUtils.shared().nextId())
-                    .nickName(RandomUtils.getChineseName(3))
+                    .nickName(RandomUtils.getChineseName(0))
                     .openId(CryptoUtils.base64Encode(RandomUtils.uuid()))
                     .unionId(CryptoUtils.base64Encode(RandomUtils.uuid()))
                     .createdAt(DateUtils.getTime())
@@ -115,7 +110,7 @@ public class AdminServiceImpl implements IAdminService {
             if (isEmail) admin.setEmail(dto.getAccount());
             else admin.setPhone(dto.getAccount());
             admin.setPassword(CryptoUtils.encryptPassword(RandomUtils.randomStr(10), admin.getId()));
-            boolean isOk = adminMapper.insert(admin) > 0;
+            boolean isOk = adminServiceBase.newAdmin(admin);
             if (!isOk) throw BusinessException.build(110001, "验证码登录失败，请重试");
             admin = adminServiceBase.getAdminById(admin.getId());
         }

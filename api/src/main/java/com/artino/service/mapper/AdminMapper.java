@@ -10,36 +10,36 @@ import java.util.Objects;
 public interface AdminMapper {
     /**
      * 新增
-     * @param entity
-     * @return
+     * @param entity entity
+     * @return 影响的行数
      */
     int insert(TAdmin entity);
 
     /**
      * 修改
-     * @param entity
-     * @return
+     * @param entity entity
+     * @return 影响的行数
      */
     int update(TAdmin entity);
 
     /**
      * 查询列表
-     * @param entity
-     * @return
+     * @param entity entity
+     * @return list
      */
     List<TAdmin> findList(TAdmin entity);
 
     /**
      * 查找指定的
-     * @param entity
-     * @return
+     * @param entity entity
+     * @return model
      */
     TAdmin findOne(TAdmin entity);
 
     /**
      * 查询指定id 的用户
-     * @param ids
-     * @return
+     * @param ids id list
+     * @return entity
      */
     @Deprecated(since = "Deprecated")
     List<TAdmin> findListWith(List<Long> ids);
@@ -60,7 +60,7 @@ public interface AdminMapper {
      * @return
      */
     default TAdmin findById(Long id) {
-        if (Objects.isNull(id) || id.equals(0L)) return null;
+        if (Objects.isNull(id) || id <= 0L) return null;
         return findOne(TAdmin.builder().id(id).build());
     }
 

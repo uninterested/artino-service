@@ -3,9 +3,9 @@ package com.artino.service.services.impl;
 import com.artino.service.base.BusinessException;
 import com.artino.service.dto.code.SendCodeDTO;
 import com.artino.service.entity.TCode;
-import com.artino.service.mapper.CodeMapper;
 import com.artino.service.services.ICodeService;
 import com.artino.service.services.base.AdminServiceBase;
+import com.artino.service.services.base.CodeServiceBase;
 import com.artino.service.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,11 +26,11 @@ public class CodeServiceImpl implements ICodeService {
 
     @Autowired
     @Lazy
-    private CodeMapper codeMapper;
+    private AdminServiceBase adminServiceBase;
 
     @Autowired
     @Lazy
-    private AdminServiceBase adminServiceBase;
+    private CodeServiceBase codeServiceBase;
 
     @Override
     public boolean sendCode(SendCodeDTO dto) {
@@ -38,7 +38,7 @@ public class CodeServiceImpl implements ICodeService {
         boolean isEmail = RegexUtils.isEmail(dto.getAccount());
         if (!isPhone && !isEmail)
             throw BusinessException.build(110002, "请输入邮箱或者手机号");
-        TCode entity = codeMapper.findNewestOne(TCode.builder().account(dto.getAccount()).build());
+        TCode entity = codeServiceBase.findCodeBy(dto.getAccount(), dto.getType());
         if (Objects.nonNull(entity)) {
             long now = DateUtils.timeSpan();
             long expiredAt = DateUtils.parseDate(entity.getExpiredAt()).getTime();
@@ -61,7 +61,7 @@ public class CodeServiceImpl implements ICodeService {
                 .createdAt(now)
                 .expiredAt(DateUtils.parseDateToStr(null, DateUtils.after(now, expired)))
                 .build();
-        boolean isOK = codeMapper.insert(code) > 0;
+        boolean isOK = codeServiceBase.newCode(code);
         TaskUtils.beginTask(100).start(new TimerTask() {
             @Override
             public void run() {
