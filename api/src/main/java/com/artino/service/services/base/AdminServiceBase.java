@@ -22,6 +22,14 @@ public class AdminServiceBase {
     @Lazy
     private AdminMapper adminMapper;
 
+    /**
+     * 新增管理员
+     * @param admin model
+     * @return 是否新增成功
+     */
+    public boolean newAdmin(TAdmin admin) {
+        return adminMapper.insert(admin) > 0;
+    }
 
     /**
      * 检测帐户是否被注册
