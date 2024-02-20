@@ -16,4 +16,11 @@ public interface IRoleService {
      * @return yes / no
      */
     boolean updateRole(Long id, NewRoleDTO dto);
+
+    /**
+     * 删除角色
+     * @param id id
+     * @return yes / no
+     */
+    boolean deleteRole(Long id);
 }

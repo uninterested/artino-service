@@ -86,7 +86,7 @@
         select IFNULL(max(sort), 0) as sort from t_role
     </select>
     <select id="findUserRoles" parameterType="java.lang.Long" resultMap="DTORoleMap">
-        select t2.*, IFNULL(t3.id, 0) as system_role from t_admin_role t1 left join t_role t2 on t1.role_id = t2.id
+        select t2.*, IFNULL(t3.id, 0) as system_role from t_admin_role t1 inner join t_role t2 on t1.role_id = t2.id
         left join t_config t3 on t2.id = t3.`value`
         <where>
             t2.deleted = 0 and t3.type = 0 and t1.admin_id = ${id}

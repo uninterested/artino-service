@@ -1,6 +1,7 @@
 package com.artino.service.services.impl;
 
 import com.artino.service.base.BusinessException;
+import com.artino.service.common.EDeleted;
 import com.artino.service.context.RequestContext;
 import com.artino.service.dto.role.NewRoleDTO;
 import com.artino.service.entity.TConfig;
@@ -58,5 +59,22 @@ public class RoleServiceImpl implements IRoleService {
         if (Objects.nonNull(dto.getName())) upt.setName(dto.getName());
         if (Objects.nonNull(dto.getDescription())) upt.setDescription(dto.getDescription());
         return roleServiceBase.update(upt);
+    }
+
+    @Override
+    public boolean deleteRole(Long id) {
+        Long uid = RequestContext.get().getUid();
+        roleServiceBase.ensureIsAdmin(uid);
+        TRole role = roleServiceBase.findById(id);
+        if (Objects.isNull(role)) throw BusinessException.build(110001, "角色不存在或已删除");
+        List<TConfig> systemRoles = configServiceBase.findSystemRole();
+        if (systemRoles.stream().anyMatch(e -> e.getId().equals(id)))
+            throw BusinessException.build(110002, "此角色不可删除");
+        return roleServiceBase.update(
+                TRole.builder()
+                        .id(id)
+                        .deleted(EDeleted.YES)
+                        .build()
+        );
     }
 }
