@@ -82,14 +82,49 @@
             </if>
         </where>
     </select>
-    <select id="findMaxSort" resultType="java.lang.Long">
+    <select id="findMaxSort" resultType="Long">
         select IFNULL(max(sort), 0) as sort from t_role
     </select>
-    <select id="findUserRoles" parameterType="java.lang.Long" resultMap="DTORoleMap">
+    <select id="findUserRoles" parameterType="Long" resultMap="DTORoleMap">
         select t2.*, IFNULL(t3.id, 0) as system_role from t_admin_role t1 inner join t_role t2 on t1.role_id = t2.id
         left join t_config t3 on t2.id = t3.`value`
         <where>
             t2.deleted = 0 and t3.type = 0 and t1.admin_id = ${id}
         </where>
     </select>
+    <select id="findWithPage" parameterType="com.artino.service.common.PageReq" resultMap="TRoleMap">
+        <include refid="queryAll" />
+        <where>
+            and `deleted` = 0
+            <if test="keyword != null and keyword != ''">
+                and ((`name` like concat('%',#{keyword, jdbcType=VARCHAR},'%')) or (`description` like concat('%',#{keyword, jdbcType=VARCHAR},'%')))
+            </if>
+            <if test="createdAt != null and createdAt.size() >= 1">
+                and `created_at` &gt;= #{createdAt[0]}
+            </if>
+            <if test="createdAt != null and createdAt.size() >= 2">
+                and `created_at` &lt;= #{createdAt[0]}
+            </if>
+        </where>
+        order by `sort` asc, `id` asc
+        <if test="current >= 0 and pageSize > 0">
+            limit #{skip}, #{pageSize}
+        </if>
+    </select>
+    <select id="findTotal" parameterType="com.artino.service.common.PageReq" resultType="Long">
+        select count(id) from t_role
+        <where>
+            and `deleted` = 0
+            <if test="keyword != null and keyword != ''">
+                and ((`name` like concat('%',#{keyword, jdbcType=VARCHAR},'%')) or (`description` like concat('%',#{keyword, jdbcType=VARCHAR},'%')))
+            </if>
+            <if test="createdAt != null and createdAt.size() >= 1">
+                and `created_at` &gt;= #{createdAt[0]}
+            </if>
+            <if test="createdAt != null and createdAt.size() >= 2">
+                and `created_at` &lt;= #{createdAt[0]}
+            </if>
+        </where>
+    </select>
+
 </mapper>

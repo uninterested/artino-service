@@ -1,6 +1,11 @@
 package com.artino.service.services;
 
+import com.artino.service.common.PageRes;
 import com.artino.service.dto.role.NewRoleDTO;
+import com.artino.service.dto.role.RoleListDTO;
+import com.artino.service.vo.role.res.RoleListResVO;
+
+import java.util.List;
 
 public interface IRoleService {
     /**
@@ -23,4 +28,17 @@ public interface IRoleService {
      * @return yes / no
      */
     boolean deleteRole(Long id);
+
+    /**
+     * 获取角色列表
+     * @return 列表
+     */
+    List<RoleListResVO> roleList(RoleListDTO dto);
+
+    /**
+     * 分页获取角色列表
+     * @param dto dto
+     * @return 列表
+     */
+    PageRes<RoleListResVO> roleListPage(RoleListDTO dto);
 }

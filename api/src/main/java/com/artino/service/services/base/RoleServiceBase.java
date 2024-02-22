@@ -1,6 +1,7 @@
 package com.artino.service.services.base;
 
 import com.artino.service.base.BusinessException;
+import com.artino.service.dto.role.RoleListDTO;
 import com.artino.service.dto.role.UserRoleDTO;
 import com.artino.service.entity.TConfig;
 import com.artino.service.entity.TRole;
@@ -43,6 +44,24 @@ public class RoleServiceBase {
                         .id(id)
                         .build()
         );
+    }
+
+    /**
+     * 获取列表
+     * @param dto dto
+     * @return list
+     */
+    public List<TRole> findWithPage(RoleListDTO dto) {
+        return roleMapper.findWithPage(dto);
+    }
+
+    /**
+     * 获取总数
+     * @param dto dto
+     * @return count
+     */
+    public Long findTotal(RoleListDTO dto) {
+        return roleMapper.findTotal(dto);
     }
 
     /**

@@ -9,6 +9,5 @@ public class JsonModuleConfig extends SimpleModule {
     public JsonModuleConfig() {
         this.addSerializer(Long.class, ToStringSerializer.instance);
         this.addSerializer(Long.TYPE, ToStringSerializer.instance);
-
     }
 }

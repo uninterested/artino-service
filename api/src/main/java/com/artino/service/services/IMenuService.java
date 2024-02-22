@@ -1,4 +1,4 @@
 package com.artino.service.services;
 
-public interface IConfigService {
+public interface IMenuService {
 }
