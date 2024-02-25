@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artino.service.mapper.MenuMapper">
+    <resultMap id="TMenuMap" type="com.artino.service.entity.TMenu">
+        <result property="id" column="id" />
+        <result property="parentId" column="parent_id" />
+        <result property="name" column="name" />
+        <result property="value" column="value" />
+        <result property="icon" column="icon" />
+        <result property="type" column="type" />
+        <result property="url" column="url" />
+        <result property="status" column="status" />
+        <result property="createdAt" column="created_at" />
+        <result property="sort" column="sort" />
+    </resultMap>
+    <resultMap id="TRoleMenuMap" type="com.artino.service.entity.TRoleMenu">
+        <result property="roleId" column="role_id" />
+        <result property="menuId" column="menu_id" />
+    </resultMap>
+    <sql id="queryAll">
+        select * from t_menu
+    </sql>
+    <sql id="whereWithCondition">
+        <where>
+            1=1
+            <if test="id != null">and `id` = #{id}</if>
+            <if test="parentId != null">and `parent_id` = #{parentId}</if>
+            <if test="name != null">and `name` = #{name}</if>
+            <if test="value != null">and `value` = #{value}</if>
+            <if test="icon != null">and `icon` = #{icon}</if>
+            <if test="type != null">and `type` = #{type}</if>
+            <if test="url != null">and `url` = #{url}</if>
+            <if test="createdAt != null">and `created_at` = #{createdAt}</if>
+            <if test="sort != null">and `sort` = #{sort}</if>
+            and `status` = 0
+        </where>
+    </sql>
+    <insert id="insert" parameterType="com.artino.service.entity.TMenu">
+        insert into t_role (
+        <trim suffix="" suffixOverrides=",">
+            <if test="id != null">`id`,</if>
+            <if test="parentId != null">`parent_id`,</if>
+            <if test="name != null">`name`,</if>
+            <if test="value != null">`value`,</if>
+            <if test="icon != null">`icon`,</if>
+            <if test="type != null">`type`,</if>
+            <if test="url != null">`url`,</if>
+            <if test="status != null">`status`,</if>
+            <if test="createdAt != null">`created_at`,</if>
+            <if test="sort != null">`sort`,</if>
+        </trim>
+        ) values (
+        <trim suffix="" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="parentId != null">#{parent_id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="value != null">#{value},</if>
+            <if test="icon != null">#{icon},</if>
+            <if test="type != null">#{type},</if>
+            <if test="url != null">#{url},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="sort != null">#{sort},</if>
+        </trim>
+        )
+    </insert>
+    <update id="update" parameterType="com.artino.service.entity.TMenu">
+        update t_role
+        <set>
+            <trim suffix="" suffixOverrides=",">
+                id = #{id},
+                <if test="parentId != null">`parent_id` = #{parentId},</if>
+                <if test="name != null">`name` = #{name},</if>
+                <if test="value != null">`value` = #{value},</if>
+                <if test="icon != null">`icon` = #{icon},</if>
+                <if test="type != null">`type` = #{type},</if>
+                <if test="url != null">`url` = #{url},</if>
+                <if test="status != null">`status` = #{status},</if>
+                <if test="createdAt != null">`created_at` = #{createdAt},</if>
+                <if test="sort != null">`sort` = #{sort},</if>
+            </trim>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="findList" parameterType="com.artino.service.entity.TMenu" resultMap="TMenuMap">
+        <include refid="queryAll" />
+        <include refid="whereWithCondition" />
+    </select>
+    <select id="findOne" parameterType="com.artino.service.entity.TMenu" resultMap="TMenuMap">
+        <include refid="queryAll" />
+        <include refid="whereWithCondition" />
+        limit 0,1
+    </select>
+    <select id="findListWith" parameterType="List" resultMap="TMenuMap">
+        <include refid="queryAll" />
+        <where>
+            and `status` = 0
+            <if test="list != null and list.size() > 0">
+                and `id` in
+                <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>
+            </if>
+        </where>
+    </select>
+    <select id="findMaxSort" resultType="Long">
+        select IFNULL(max(sort), 0) as sort from t_menu
+    </select>
+    <select id="findRoleMenuWith" parameterType="List" resultMap="TRoleMenuMap">
+        select * from t_role_menu
+        <where>
+            1 = 1
+            <if test="list != null and list.size() > 0">
+                and `role_id` in
+                <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

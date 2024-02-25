@@ -1,5 +1,6 @@
 package com.artino.service.mapper;
 
+import com.artino.service.common.PageReq;
 import com.artino.service.dto.role.UserRoleDTO;
 import com.artino.service.entity.TRole;
 import org.springframework.stereotype.Repository;
@@ -43,6 +44,20 @@ public interface RoleMapper {
      * @return role list
      */
     List<UserRoleDTO> findUserRoles(Long id);
+
+    /**
+     * 获取数据
+     * @param req req
+     * @return list
+     */
+    List<TRole> findWithPage(PageReq req);
+
+    /**
+     * 获取总数
+     * @param req req
+     * @return count
+     */
+    Long findTotal(PageReq req);
 
     /**
      * 查询指定id 的用户
