@@ -35,8 +35,11 @@
             and `status` = 0
         </where>
     </sql>
+    <sql id="commonOrder">
+        order by type asc, parent_id asc, sort asc
+    </sql>
     <insert id="insert" parameterType="com.artino.service.entity.TMenu">
-        insert into t_role (
+        insert into t_menu (
         <trim suffix="" suffixOverrides=",">
             <if test="id != null">`id`,</if>
             <if test="parentId != null">`parent_id`,</if>
@@ -52,7 +55,7 @@
         ) values (
         <trim suffix="" suffixOverrides=",">
             <if test="id != null">#{id},</if>
-            <if test="parentId != null">#{parent_id},</if>
+            <if test="parentId != null">#{parentId},</if>
             <if test="name != null">#{name},</if>
             <if test="value != null">#{value},</if>
             <if test="icon != null">#{icon},</if>
@@ -65,7 +68,7 @@
         )
     </insert>
     <update id="update" parameterType="com.artino.service.entity.TMenu">
-        update t_role
+        update t_menu
         <set>
             <trim suffix="" suffixOverrides=",">
                 id = #{id},
@@ -85,6 +88,7 @@
     <select id="findList" parameterType="com.artino.service.entity.TMenu" resultMap="TMenuMap">
         <include refid="queryAll" />
         <include refid="whereWithCondition" />
+        <include refid="commonOrder" />
     </select>
     <select id="findOne" parameterType="com.artino.service.entity.TMenu" resultMap="TMenuMap">
         <include refid="queryAll" />
@@ -100,6 +104,18 @@
                 <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>
             </if>
         </where>
+        <include refid="commonOrder" />
+    </select>
+    <select id="findListWithRoleId" parameterType="List" resultMap="TMenuMap">
+        select t2.* from t_role_menu t1 inner join t_menu t2 on t1.menu_id = t2.id
+        <where>
+            and t2.`status` = 0
+            <if test="list != null and list.size() > 0">
+                and t1.`role_id` in
+                <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>
+            </if>
+        </where>
+        <include refid="commonOrder" />
     </select>
     <select id="findMaxSort" resultType="Long">
         select IFNULL(max(sort), 0) as sort from t_menu

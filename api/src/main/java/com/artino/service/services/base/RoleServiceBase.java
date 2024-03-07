@@ -99,6 +99,10 @@ public class RoleServiceBase {
         return roles.stream().anyMatch(e -> e.getSystemRole().equals(config.getId()));
     }
 
+    /**
+     * 确保登录的用户是管理员
+     * @param userId 用户id
+     */
     public void ensureIsAdmin(Long userId) {
         boolean isAdmin = userIsAdmin(userId);
         if (!isAdmin) throw BusinessException.build(100001, "没有操作的权限");
