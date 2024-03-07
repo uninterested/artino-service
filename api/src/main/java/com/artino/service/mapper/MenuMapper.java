@@ -45,11 +45,18 @@ public interface MenuMapper {
     TMenu findOne(TMenu entity);
 
     /**
-     查询指定id 的用户
+     查询指定id 的用户的菜单
      * @param ids id list
      * @return entity list
      */
     List<TMenu> findListWith(List<Long> ids);
+
+    /**
+     * 查询指定角色的菜单
+     * @param roleIds 角色id
+     * @return entity list
+     */
+    List<TMenu> findListWithRoleId(List<Long> roleIds);
 
     /**
      * 查询指定id 的用户的集合

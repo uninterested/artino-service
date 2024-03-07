@@ -4,6 +4,9 @@ import com.artino.service.dto.admin.AdminCodeLoginDTO;
 import com.artino.service.dto.admin.AdminCreateDTO;
 import com.artino.service.dto.admin.AdminLoginDTO;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
+import com.artino.service.vo.admin.res.AdminMenuListResVO;
+
+import java.util.List;
 
 public interface IAdminService {
     /**
