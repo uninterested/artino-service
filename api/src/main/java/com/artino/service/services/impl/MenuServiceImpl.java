@@ -85,8 +85,29 @@ public class MenuServiceImpl implements IMenuService {
 
     @Override
     public boolean updateMenu(UpdateMenuVO vo, Long id) {
-        // TODO 功能需要实现
-        return false;
+        Long userId = RequestContext.get().getUid();
+        roleServiceBase.ensureIsAdmin(userId);
+        TMenu menu = menuServiceBase.findMenuBy(id);
+        if (Objects.isNull(menu))
+            throw BusinessException.build(100002, "指定菜单不存在或已被删除");
+        TMenu wait = TMenu.builder().id(id).build();
+        if (StringUtils.isNotEmpty(vo.getName()) && !menu.getName().equals(vo.getName()))
+            wait.setName(vo.getName());
+        if (menu.getType() == TMenu.EType.MENU) {
+            if (StringUtils.isNotEmpty(vo.getIcon()) && !menu.getIcon().equals(vo.getIcon()))
+                wait.setIcon(vo.getIcon());
+            if (StringUtils.isNotEmpty(vo.getUrl()) && !menu.getUrl().equals(vo.getUrl()))
+                wait.setUrl(vo.getUrl());
+        } else if (menu.getType() == TMenu.EType.ROUTE) {
+            if (StringUtils.isNotEmpty(vo.getValue()) && !menu.getValue().equals(vo.getValue()))
+                wait.setValue(vo.getValue());
+            if (StringUtils.isNotEmpty(vo.getUrl()) && !menu.getUrl().equals(vo.getUrl()))
+                wait.setUrl(vo.getUrl());
+        } else if (menu.getType() == TMenu.EType.BUTTON) {
+            if (StringUtils.isNotEmpty(vo.getValue()) && !menu.getValue().equals(vo.getValue()))
+                wait.setValue(vo.getValue());
+        }
+        return menuServiceBase.update(wait);
     }
 
     @Override

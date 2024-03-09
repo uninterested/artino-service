@@ -50,7 +50,7 @@ public class MenuController {
         return R.error(120001, "更新菜单失败");
     }
 
-    @GetMapping("/list")
+    @GetMapping("/tree")
     @ApiOperation("获取当前登录用户可访问的菜单列表")
     @LoginRequired(type = LoginRequired.UserType.ADMIN)
     public R<List<AdminMenuListResVO>> menuList() {
@@ -58,7 +58,8 @@ public class MenuController {
         return R.success(list);
     }
 
-    @GetMapping("/system")
+
+    @GetMapping("/system.tree")
     @ApiOperation("获取所有的可访问的菜单列表")
     @LoginRequired(type = LoginRequired.UserType.ADMIN)
     public R<List<AdminMenuListResVO>> systemMenuList() {

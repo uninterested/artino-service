@@ -30,6 +30,7 @@ public class MenuServiceBase {
 
     /**
      * 新增菜单
+     *
      * @param entity entity
      * @return 是否成功
      */
@@ -39,6 +40,7 @@ public class MenuServiceBase {
 
     /**
      * 更新数据
+     *
      * @param entity entity
      * @return 是否成功
      */

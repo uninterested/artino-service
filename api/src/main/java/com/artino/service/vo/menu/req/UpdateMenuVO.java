@@ -8,9 +8,6 @@ import lombok.Data;
 @Data
 @ApiModel("更新菜单")
 public class UpdateMenuVO {
-    @ApiModelProperty("父级菜单ID")
-    private Long parentId = 0L;
-
     @ApiModelProperty("菜单名称")
     @Xss
     private String name;
