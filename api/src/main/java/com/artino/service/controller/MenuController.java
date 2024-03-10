@@ -58,7 +58,6 @@ public class MenuController {
         return R.success(list);
     }
 
-
     @GetMapping("/system.tree")
     @ApiOperation("获取所有的可访问的菜单列表")
     @LoginRequired(type = LoginRequired.UserType.ADMIN)
