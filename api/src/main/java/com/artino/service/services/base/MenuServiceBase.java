@@ -1,12 +1,14 @@
 package com.artino.service.services.base;
 
 import com.artino.service.common.EYesNo;
+import com.artino.service.dto.menu.MenuListDTO;
 import com.artino.service.dto.role.UserRoleDTO;
 import com.artino.service.entity.TMenu;
 import com.artino.service.entity.TRoleMenu;
 import com.artino.service.mapper.MenuMapper;
 import com.artino.service.utils.CopyUtils;
 import com.artino.service.vo.admin.res.AdminMenuListResVO;
+import com.artino.service.vo.menu.req.MenuListVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -70,6 +72,15 @@ public class MenuServiceBase {
                 .build();
         if (Objects.nonNull(type)) dto.setType(type);
         return findList(dto);
+    }
+
+    /**
+     * 查询指定id的菜单列表
+     * @param ids id list
+     * @return list
+     */
+    public List<TMenu> findLists(List<Long> ids) {
+        return menuMapper.findLists(ids);
     }
 
     /**
@@ -192,5 +203,23 @@ public class MenuServiceBase {
         }
         cache.clear();
         return tree;
+    }
+
+    /**
+     * 分页查询数据
+     * @param req req
+     * @return 分页数据
+     */
+    public List<TMenu> findWithPage(MenuListDTO req) {
+        return menuMapper.findWithPage(req);
+    }
+
+    /**
+     * 查询总
+     * @param req req
+     * @return 总数
+     */
+    public Long findTotal(MenuListDTO req) {
+        return menuMapper.findTotal(req);
     }
 }

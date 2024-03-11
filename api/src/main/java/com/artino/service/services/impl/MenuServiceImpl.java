@@ -2,17 +2,21 @@ package com.artino.service.services.impl;
 
 import com.artino.service.base.BusinessException;
 import com.artino.service.common.EYesNo;
+import com.artino.service.common.PageRes;
 import com.artino.service.context.RequestContext;
+import com.artino.service.dto.menu.MenuListDTO;
+import com.artino.service.dto.menu.NewMenuDTO;
+import com.artino.service.dto.menu.UpdateMenuDTO;
 import com.artino.service.entity.TMenu;
 import com.artino.service.services.IMenuService;
 import com.artino.service.services.base.MenuServiceBase;
 import com.artino.service.services.base.RoleServiceBase;
+import com.artino.service.utils.CopyUtils;
 import com.artino.service.utils.DateUtils;
 import com.artino.service.utils.IDUtils;
 import com.artino.service.utils.StringUtils;
 import com.artino.service.vo.admin.res.AdminMenuListResVO;
-import com.artino.service.vo.menu.req.NewMenuVO;
-import com.artino.service.vo.menu.req.UpdateMenuVO;
+import com.artino.service.vo.menu.res.MenuListResVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -31,7 +35,7 @@ public class MenuServiceImpl implements IMenuService {
     private MenuServiceBase menuServiceBase;
 
     @Override
-    public boolean newMenu(NewMenuVO vo) {
+    public boolean newMenu(NewMenuDTO vo) {
         Long userId = RequestContext.get().getUid();
         roleServiceBase.ensureIsAdmin(userId);
         if (vo.getType() == TMenu.EType.MENU) {
@@ -84,7 +88,7 @@ public class MenuServiceImpl implements IMenuService {
     }
 
     @Override
-    public boolean updateMenu(UpdateMenuVO vo, Long id) {
+    public boolean updateMenu(UpdateMenuDTO vo, Long id) {
         Long userId = RequestContext.get().getUid();
         roleServiceBase.ensureIsAdmin(userId);
         TMenu menu = menuServiceBase.findMenuBy(id);
@@ -119,5 +123,31 @@ public class MenuServiceImpl implements IMenuService {
     @Override
     public List<AdminMenuListResVO> systemMenuLists() {
         return menuServiceBase.findUserMenuTree(null, null);
+    }
+
+    @Override
+    public List<MenuListResVO> systemMenus(MenuListDTO query) {
+        List<TMenu> list = menuServiceBase.findWithPage(query);
+        return list.stream().map(e -> {
+            MenuListResVO dto = CopyUtils.copy(e, MenuListResVO.class);
+            if (Objects.nonNull(dto)) {
+                if (dto.getType() == TMenu.EType.MENU) {
+                    dto.setValue(null);
+                } else if (dto.getType() == TMenu.EType.ROUTE) {
+                    dto.setIcon(null);
+                } else if (dto.getType() == TMenu.EType.BUTTON) {
+                    dto.setIcon(null);
+                    dto.setUrl(null);
+                }
+            }
+            return dto;
+        }).toList();
+    }
+
+    @Override
+    public PageRes<MenuListResVO> systemMenusPage(MenuListDTO query) {
+        List<MenuListResVO> list = systemMenus(query);
+        Long total = menuServiceBase.findTotal(query);
+        return PageRes.build(list, total, query);
     }
 }
