@@ -4,6 +4,7 @@ import com.artino.service.base.BusinessException;
 import com.artino.service.common.EDeleted;
 import com.artino.service.common.PageRes;
 import com.artino.service.context.RequestContext;
+import com.artino.service.dto.menu.RolePermissionDTO;
 import com.artino.service.dto.role.NewRoleDTO;
 import com.artino.service.dto.role.RoleListDTO;
 import com.artino.service.entity.TConfig;
@@ -11,6 +12,7 @@ import com.artino.service.entity.TMenu;
 import com.artino.service.entity.TRole;
 import com.artino.service.entity.TRoleMenu;
 import com.artino.service.services.IRoleService;
+import com.artino.service.services.base.AdminServiceBase;
 import com.artino.service.services.base.ConfigServiceBase;
 import com.artino.service.services.base.MenuServiceBase;
 import com.artino.service.services.base.RoleServiceBase;
@@ -22,6 +24,7 @@ import com.artino.service.vo.role.res.RoleListResVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -138,5 +141,37 @@ public class RoleServiceImpl implements IRoleService {
         List<RoleListResVO> data = roleList(dto);
         Long total = roleServiceBase.findTotal(dto);
         return PageRes.build(data, total, dto);
+    }
+
+    @Override
+    @Transactional
+    public boolean setPermission(RolePermissionDTO dto) {
+        if (!dto.isAdmin() && dto.getMenuIds().isEmpty())
+            throw BusinessException.build(110001, "请检查入参");
+        Long userId = RequestContext.get().getUid();
+        roleServiceBase.ensureIsAdmin(userId);
+        TRole role = roleServiceBase.findById(dto.getRoleId());
+        if (Objects.isNull(role))
+            throw BusinessException.build(110002, "角色不存在或者已被删除");
+        if (!dto.isAdmin()) {
+            if (dto.getMenuIds().isEmpty())
+                throw BusinessException.build(110001, "请检查入参");
+            List<TMenu> menus = menuServiceBase.findLists(dto.getMenuIds());
+            if (menus.size() != dto.getMenuIds().size())
+                throw BusinessException.build(110003, "存在无效的菜单");
+        }
+        roleServiceBase.deleteListByRoleId(dto.getRoleId());
+        if (dto.isAdmin()) {
+            Long adminId = configServiceBase.findAdmin().getValue();
+            TRoleMenu item = TRoleMenu.builder()
+                    .roleId(dto.getRoleId())
+                    .menuId(adminId)
+                    .build();
+            return roleServiceBase.batchInsertRoleMenu(List.of(item));
+        } else {
+            List<TRoleMenu> list = dto.getMenuIds().stream().map(e -> TRoleMenu.builder().roleId(dto.getRoleId())
+                    .menuId(e).build()).toList();
+            return roleServiceBase.batchInsertRoleMenu(list);
+        }
     }
 }

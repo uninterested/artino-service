@@ -3,12 +3,14 @@ package com.artino.service.controller;
 import com.artino.service.annotation.LoginRequired;
 import com.artino.service.base.R;
 import com.artino.service.common.PageRes;
+import com.artino.service.dto.menu.RolePermissionDTO;
 import com.artino.service.dto.role.NewRoleDTO;
 import com.artino.service.dto.role.RoleListDTO;
 import com.artino.service.services.IRoleService;
 import com.artino.service.vo.role.req.EditRoleVO;
 import com.artino.service.vo.role.req.NewRoleVO;
 import com.artino.service.vo.role.req.RoleListVO;
+import com.artino.service.vo.role.req.RolePermissionVO;
 import com.artino.service.vo.role.res.RoleListResVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -84,5 +86,19 @@ public class RoleController {
         dto.setPageSize(vo.getPageSize());
         PageRes<RoleListResVO> res = roleService.roleListPage(dto);
         return R.success(res);
+    }
+
+    @PostMapping("/permission/{id}")
+    @ApiOperation("角色赋权")
+    @LoginRequired(type = LoginRequired.UserType.ADMIN)
+    public R<?> setPermission(@Valid @RequestBody RolePermissionVO vo, @PathVariable Long id) {
+        RolePermissionDTO dto = RolePermissionDTO.builder()
+                .roleId(id)
+                .admin(vo.isAdmin())
+                .menuIds(vo.getMenuIds())
+                .build();
+        boolean isOK = roleService.setPermission(dto);
+        if (isOK) return R.success();
+        return R.error(120001, "角色赋权失败");
     }
 }

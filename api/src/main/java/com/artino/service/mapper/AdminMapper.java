@@ -1,6 +1,7 @@
 package com.artino.service.mapper;
 
 import com.artino.service.entity.TAdmin;
+import com.artino.service.entity.TAdminRole;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,6 +22,20 @@ public interface AdminMapper {
      * @return 影响的行数
      */
     int update(TAdmin entity);
+
+    /**
+     * 删除用户的权限
+     * @param adminId 用户id
+     * @return 影响的行数
+     */
+    int deleteListByUserId(Long adminId);
+
+    /**
+     * 批量插入用户-角色数据
+     * @param list data
+     * @return 影响的行数
+     */
+    int batchInsertAdminRole(List<TAdminRole> list);
 
     /**
      * 查询列表

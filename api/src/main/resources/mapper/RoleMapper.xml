@@ -103,7 +103,7 @@
                 and `created_at` &gt;= #{createdAt[0]}
             </if>
             <if test="createdAt != null and createdAt.size() >= 2">
-                and `created_at` &lt;= #{createdAt[0]}
+                and `created_at` &lt;= #{createdAt[1]}
             </if>
         </where>
         order by `sort` asc, `id` asc
@@ -122,9 +122,24 @@
                 and `created_at` &gt;= #{createdAt[0]}
             </if>
             <if test="createdAt != null and createdAt.size() >= 2">
-                and `created_at` &lt;= #{createdAt[0]}
+                and `created_at` &lt;= #{createdAt[1]}
             </if>
         </where>
     </select>
+    <delete id="deleteListByRoleId" parameterType="Long">
+        delete from `t_role_menu`
+        <where>
+            1 = 1
+            <if test="roleId != null">
+                and `role_id` = #{roleId}
+            </if>
+        </where>
+    </delete>
+    <insert id="batchInsertRoleMenu" parameterType="com.artino.service.entity.TRoleMenu">
+        insert into `t_role_menu` (`role_id`,`menu_id`) values
+        <foreach collection="list" separator="," item="item">
+            (#{item.roleId}, #{item.menuId})
+        </foreach>
+    </insert>
 
 </mapper>

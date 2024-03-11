@@ -1,21 +1,17 @@
-package com.artino.service.vo.admin.res;
+package com.artino.service.vo.menu.res;
 
 import com.artino.service.entity.TMenu;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("用户登录返回信息")
-public class AdminMenuListResVO {
+public class MenuListResVO {
     @ApiModelProperty("菜单id")
     private Long id;
     @ApiModelProperty("父级菜单id")
@@ -32,6 +28,4 @@ public class AdminMenuListResVO {
     private String url;
     @ApiModelProperty("创建时间")
     private String createdAt;
-    @ApiModelProperty("子菜单")
-    private List<AdminMenuListResVO> children;
 }

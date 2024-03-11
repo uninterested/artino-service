@@ -5,6 +5,7 @@ import com.artino.service.dto.role.RoleListDTO;
 import com.artino.service.dto.role.UserRoleDTO;
 import com.artino.service.entity.TConfig;
 import com.artino.service.entity.TRole;
+import com.artino.service.entity.TRoleMenu;
 import com.artino.service.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -75,6 +76,15 @@ public class RoleServiceBase {
     }
 
     /**
+     * 查询指定id 的用户的集合
+     * @param ids ids
+     * @return list
+     */
+    public List<TRole> findLists(List<Long> ids) {
+        return roleMapper.findLists(ids);
+    }
+
+    /**
      * 查询指定用户拥有的角色
      *
      * @param userId 用户id
@@ -106,5 +116,24 @@ public class RoleServiceBase {
     public void ensureIsAdmin(Long userId) {
         boolean isAdmin = userIsAdmin(userId);
         if (!isAdmin) throw BusinessException.build(100001, "没有操作的权限");
+    }
+
+    /**
+     * 删除指定的角色id
+     * @param roleId roleId
+     * @return 是否删除成功
+     */
+    public boolean deleteListByRoleId(Long roleId) {
+        return roleMapper.deleteListByRoleId(roleId) > 0;
+    }
+
+    /**
+     * 批量插入数据
+     * @param list list
+     * @return 是否成功
+     */
+    public boolean batchInsertRoleMenu(List<TRoleMenu> list) {
+        if (Objects.isNull(list) || list.isEmpty()) return false;
+        return roleMapper.batchInsertRoleMenu(list) > 0;
     }
 }

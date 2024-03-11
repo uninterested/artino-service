@@ -5,11 +5,13 @@ import com.artino.service.context.RequestContext;
 import com.artino.service.dto.admin.AdminCodeLoginDTO;
 import com.artino.service.dto.admin.AdminCreateDTO;
 import com.artino.service.dto.admin.AdminLoginDTO;
-import com.artino.service.entity.TAdmin;
-import com.artino.service.entity.TCode;
+import com.artino.service.dto.admin.SetRoleDTO;
+import com.artino.service.entity.*;
 import com.artino.service.services.IAdminService;
 import com.artino.service.services.base.AdminServiceBase;
 import com.artino.service.services.base.CodeServiceBase;
+import com.artino.service.services.base.ConfigServiceBase;
+import com.artino.service.services.base.RoleServiceBase;
 import com.artino.service.utils.*;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
 import com.artino.service.vo.admin.res.AdminMenuListResVO;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +35,14 @@ public class AdminServiceImpl implements IAdminService {
     @Autowired
     @Lazy
     private CodeServiceBase codeServiceBase;
+
+    @Autowired
+    @Lazy
+    private RoleServiceBase roleServiceBase;
+
+    @Autowired
+    @Lazy
+    private ConfigServiceBase configServiceBase;
 
     @Override
     public boolean adminCreate(AdminCreateDTO dto) {
@@ -128,5 +139,38 @@ public class AdminServiceImpl implements IAdminService {
         String token = ServletUtils.currentRequest().getHeader(tokenKey);
         if (StringUtils.isNotEmpty(token)) RedisUtils.del(KeyUtils.getTokenKey(token));
         return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean setRole(SetRoleDTO dto) {
+        if (!dto.isAdmin() && dto.getRoleIds().isEmpty())
+            throw BusinessException.build(110001, "请检查入参");
+        Long userId = RequestContext.get().getUid();
+        if (userId.equals(dto.getUserId()))
+            throw BusinessException.build(110002, "不能为自己设置角色");
+        TAdmin user = adminServiceBase.getAdminById(dto.getUserId());
+        if (Objects.isNull(user))
+            throw BusinessException.build(110003, "指定用户不存在");
+        if (!dto.isAdmin()) {
+            if (dto.getRoleIds().isEmpty())
+                throw BusinessException.build(110003, "请检查入参");
+            List<TRole> roles = roleServiceBase.findLists(dto.getRoleIds());
+            if (roles.size() != dto.getRoleIds().size())
+                throw BusinessException.build(110003, "存在无效的角色");
+        }
+        adminServiceBase.deleteListByUserId(dto.getUserId());
+        if (dto.isAdmin()) {
+            Long adminId = configServiceBase.findAdmin().getValue();
+            TAdminRole item = TAdminRole.builder()
+                    .adminId(dto.getUserId())
+                    .adminId(adminId).build();
+            return adminServiceBase.batchInsertAdminRole(List.of(item));
+        } else {
+            List<TAdminRole> list = dto.getRoleIds().stream().map(e ->
+                    TAdminRole.builder().adminId(dto.getUserId()).roleId(e).build()
+            ).toList();
+            return adminServiceBase.batchInsertAdminRole(list);
+        }
     }
 }

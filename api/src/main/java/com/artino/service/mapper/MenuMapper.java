@@ -1,5 +1,6 @@
 package com.artino.service.mapper;
 
+import com.artino.service.common.PageReq;
 import com.artino.service.entity.TMenu;
 import com.artino.service.entity.TRoleMenu;
 import org.springframework.stereotype.Repository;
@@ -73,4 +74,18 @@ public interface MenuMapper {
      * @return 最大值
      */
     Long findMaxSort();
+
+    /**
+     * 分页查询数量
+     * @param req req
+     * @return data
+     */
+    List<TMenu> findWithPage(PageReq req);
+
+    /**
+     * 查询总数
+     * @param req req
+     * @return 总数
+     */
+    Long findTotal(PageReq req);
 }

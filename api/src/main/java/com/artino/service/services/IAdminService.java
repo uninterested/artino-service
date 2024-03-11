@@ -3,6 +3,7 @@ package com.artino.service.services;
 import com.artino.service.dto.admin.AdminCodeLoginDTO;
 import com.artino.service.dto.admin.AdminCreateDTO;
 import com.artino.service.dto.admin.AdminLoginDTO;
+import com.artino.service.dto.admin.SetRoleDTO;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
 import com.artino.service.vo.admin.res.AdminMenuListResVO;
 
@@ -41,4 +42,11 @@ public interface IAdminService {
      * @return 是否退出成功
      */
     boolean out();
+
+    /**
+     * 为用户绑定角色
+     * @param dto dto
+     * @return 是否绑定成功
+     */
+    boolean setRole(SetRoleDTO dto);
 }

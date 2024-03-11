@@ -3,6 +3,7 @@ package com.artino.service.mapper;
 import com.artino.service.common.PageReq;
 import com.artino.service.dto.role.UserRoleDTO;
 import com.artino.service.entity.TRole;
+import com.artino.service.entity.TRoleMenu;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -94,4 +95,18 @@ public interface RoleMapper {
           TRole.builder().id(id).build()
         );
     }
+
+    /**
+     * 删除指定的角色id
+     * @param roleId 角色id
+     * @return count
+     */
+    int deleteListByRoleId(Long roleId);
+
+    /**
+     * 批量插入角色-菜单表
+     * @param list list
+     * @return count
+     */
+    int batchInsertRoleMenu(List<TRoleMenu> list);
 }

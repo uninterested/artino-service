@@ -125,4 +125,20 @@
             </if>
         </where>
     </select>
+    <delete id="deleteListByUserId" parameterType="Long">
+        delete from `t_admin_role`
+        <where>
+            1 = 1
+            <if test="adminId != null">
+                and `admin_id` = #{adminId}
+            </if>
+        </where>
+    </delete>
+    <insert id="batchInsertAdminRole" parameterType="com.artino.service.entity.T">
+        insert into `t_admin_role` (`admin_id`,`role_id`) values
+        <foreach collection="list" separator="," item="item">
+            (#{item.adminId}, #{item.roleId})
+        </foreach>
+    </insert>
+
 </mapper>

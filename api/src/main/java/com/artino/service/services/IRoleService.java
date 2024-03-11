@@ -1,6 +1,7 @@
 package com.artino.service.services;
 
 import com.artino.service.common.PageRes;
+import com.artino.service.dto.menu.RolePermissionDTO;
 import com.artino.service.dto.role.NewRoleDTO;
 import com.artino.service.dto.role.RoleListDTO;
 import com.artino.service.vo.role.res.RoleListResVO;
@@ -41,4 +42,11 @@ public interface IRoleService {
      * @return 列表
      */
     PageRes<RoleListResVO> roleListPage(RoleListDTO dto);
+
+    /**
+     * 为角色赋权
+     * @param dto dto
+     * @return 是否成功
+     */
+    boolean setPermission(RolePermissionDTO dto);
 }
