@@ -76,6 +76,15 @@ public class RoleServiceBase {
     }
 
     /**
+     * 查询指定id 的用户的集合
+     * @param ids ids
+     * @return list
+     */
+    public List<TRole> findLists(List<Long> ids) {
+        return roleMapper.findLists(ids);
+    }
+
+    /**
      * 查询指定用户拥有的角色
      *
      * @param userId 用户id

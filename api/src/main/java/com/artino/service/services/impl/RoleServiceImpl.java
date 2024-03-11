@@ -153,9 +153,13 @@ public class RoleServiceImpl implements IRoleService {
         TRole role = roleServiceBase.findById(dto.getRoleId());
         if (Objects.isNull(role))
             throw BusinessException.build(110002, "角色不存在或者已被删除");
-        List<TMenu> menus = menuServiceBase.findLists(dto.getMenuIds());
-        if (menus.size() != dto.getMenuIds().size())
-            throw BusinessException.build(110003, "存在无效的菜单");
+        if (!dto.isAdmin()) {
+            if (dto.getMenuIds().isEmpty())
+                throw BusinessException.build(110001, "请检查入参");
+            List<TMenu> menus = menuServiceBase.findLists(dto.getMenuIds());
+            if (menus.size() != dto.getMenuIds().size())
+                throw BusinessException.build(110003, "存在无效的菜单");
+        }
         roleServiceBase.deleteListByRoleId(dto.getRoleId());
         if (dto.isAdmin()) {
             Long adminId = configServiceBase.findAdmin().getValue();

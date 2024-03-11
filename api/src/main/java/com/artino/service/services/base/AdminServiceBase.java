@@ -3,6 +3,7 @@ package com.artino.service.services.base;
 
 import com.artino.service.base.BusinessException;
 import com.artino.service.entity.TAdmin;
+import com.artino.service.entity.TAdminRole;
 import com.artino.service.mapper.AdminMapper;
 import com.artino.service.utils.*;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
@@ -41,6 +42,26 @@ public class AdminServiceBase {
         boolean isEmail = RegexUtils.isEmail(account);
         if (isEmail) return Objects.nonNull(adminMapper.findByEmail(account));
         else return Objects.nonNull(adminMapper.findByPhone(account));
+    }
+
+    /**
+     * 删除用户的权限
+     * @param userId 用户id
+     * @return is ok
+     */
+    public boolean deleteListByUserId(Long userId) {
+        if (Objects.isNull(userId) || userId <=0) return false;
+        return adminMapper.deleteListByUserId(userId) > 0;
+    }
+
+    /**
+     * 批量插入用户-角色数
+     * @param list list
+     * @return is ok
+     */
+    public boolean batchInsertAdminRole(List<TAdminRole> list) {
+        if (Objects.isNull(list) || list.isEmpty()) return false;
+        return adminMapper.batchInsertAdminRole(list) > 0;
     }
 
     /**

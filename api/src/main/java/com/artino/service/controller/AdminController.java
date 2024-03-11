@@ -5,11 +5,13 @@ import com.artino.service.base.R;
 import com.artino.service.dto.admin.AdminCodeLoginDTO;
 import com.artino.service.dto.admin.AdminCreateDTO;
 import com.artino.service.dto.admin.AdminLoginDTO;
+import com.artino.service.dto.admin.SetRoleDTO;
 import com.artino.service.services.IAdminService;
 import com.artino.service.validator.required.Required;
 import com.artino.service.vo.admin.req.AdminCreateVO;
 import com.artino.service.vo.admin.req.AdminLoginVO;
 import com.artino.service.vo.admin.req.CodeLoginVO;
+import com.artino.service.vo.admin.req.SetRoleVO;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
 import com.artino.service.vo.admin.res.AdminMenuListResVO;
 import io.swagger.annotations.Api;
@@ -80,5 +82,18 @@ public class AdminController {
         boolean isOK = adminService.out();
         if (isOK) return R.success();
         return R.error(120002, "账号退出失败");
+    }
+
+    @PostMapping("/setRole/{id}")
+    @ApiOperation("为用户设置角色")
+    @LoginRequired(type = LoginRequired.UserType.ADMIN)
+    public R<?> setRole(@RequestBody SetRoleVO vo, @PathVariable Long id) {
+        SetRoleDTO dto = SetRoleDTO.builder()
+                .userId(id)
+                .isAdmin(vo.isAdmin())
+                .roleIds(vo.getRoleIds()).build();
+        boolean isOK = adminService.setRole(dto);
+        if (isOK) return R.success();
+        return R.error(120001, "设置角色失败");
     }
 }
