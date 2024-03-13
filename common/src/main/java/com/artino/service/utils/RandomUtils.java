@@ -50,6 +50,11 @@ public class RandomUtils {
         return (int) result;
     }
 
+    public static String getRandomName(int len) {
+        if (len <= 0) len = new Random().nextInt(10000) % 6 + 1;
+        return "User-" + randomStr(len);
+    }
+
     /**
      * 随机生成中文名
      * @param len

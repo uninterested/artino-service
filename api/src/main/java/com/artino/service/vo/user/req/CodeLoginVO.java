@@ -1,4 +1,4 @@
-package com.artino.service.vo.admin.req;
+package com.artino.service.vo.user.req;
 
 import com.artino.service.validator.required.Required;
 import io.swagger.annotations.ApiModel;

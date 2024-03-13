@@ -1,73 +1,43 @@
-package com.artino.service.entity;
+package com.artino.service.dto.admin;
 
 import com.artino.service.base.R;
-import com.artino.service.common.EYesNo;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Objects;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TMenu {
+public class QRCodeDTO {
     /**
-     * id
+     * 签发机构
      */
-    private Long id;
+    private final String publisher = "Artino";
     /**
-     * 父级id
-     */
-    private Long parentId;
-    /**
-     * 菜单名称
-     */
-    private String name;
-    /**
-     * 权限值
-     */
-    private String value;
-    /**
-     * 图标
-     */
-    private String icon;
-    /**
-     * 类别
+     * 二维码用途
      */
     private EType type;
     /**
-     * 资源路由
+     * 过期时间
      */
-    private String url;
+    private Long expiredAt;
     /**
-     * 状态
+     * 票据
      */
-    private EYesNo status;
+    private String token;
     /**
-     * 创建时间
+     * type 是登录的时候：管理端的id
      */
-    private String createdAt;
-    /**
-     * 排序值
-     */
-    private Integer sort;
+    private Object data;
 
     public static enum EType implements R.IBaseEnum {
         /**
-         * 一级路由
+         * 登录二维码
          */
-        MENU(0, "MENU"),
-        /**
-         * 二级路由
-         */
-        ROUTE(1, "ROUTE"),
-        /**
-         * 按钮
-         */
-        BUTTON(2, "BUTTON");
+        LOGIN(110000, "LOGIN");
 
         @JsonValue
         public final Integer value;
@@ -85,7 +55,7 @@ public class TMenu {
 
         @JsonCreator
         public static EType getItem(Integer value) {
-            for (EType type : EType.values())
+            for (EType type: EType.values())
                 if (type.value.equals(value)) return type;
             return null;
         }

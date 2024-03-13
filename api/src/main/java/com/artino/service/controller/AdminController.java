@@ -56,7 +56,7 @@ public class AdminController {
         return R.success(resVo);
     }
 
-    @GetMapping("sync")
+    @GetMapping("/sync")
     @ApiOperation("同步用户信息")
     @LoginRequired(type = LoginRequired.UserType.ADMIN)
     public R<AdminLoginResVO> sync() {
@@ -64,7 +64,7 @@ public class AdminController {
         return R.success(resVo);
     }
 
-    @PostMapping("/code-login")
+    @PostMapping("/code.login")
     @ApiOperation("验证码登录")
     public R<AdminLoginResVO> codeLogin(@Valid @RequestBody CodeLoginVO vo) {
         AdminCodeLoginDTO dto = AdminCodeLoginDTO.builder()
@@ -95,5 +95,19 @@ public class AdminController {
         boolean isOK = adminService.setRole(dto);
         if (isOK) return R.success();
         return R.error(120001, "设置角色失败");
+    }
+
+    @GetMapping("/qrcode")
+    @ApiOperation("生成二维码")
+    public R<String> newQrcode() {
+        String result = adminService.newQrcode();
+        return R.success(result);
+    }
+
+    @GetMapping("/scan/{token}")
+    @ApiOperation("检测C端的用户有没有扫码绑定")
+    public R<Object> scanInfo(@PathVariable String token) {
+        Object result = adminService.scanInfo(token);
+        return R.success(result);
     }
 }

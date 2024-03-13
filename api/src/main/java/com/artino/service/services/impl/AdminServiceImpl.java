@@ -2,10 +2,7 @@ package com.artino.service.services.impl;
 
 import com.artino.service.base.BusinessException;
 import com.artino.service.context.RequestContext;
-import com.artino.service.dto.admin.AdminCodeLoginDTO;
-import com.artino.service.dto.admin.AdminCreateDTO;
-import com.artino.service.dto.admin.AdminLoginDTO;
-import com.artino.service.dto.admin.SetRoleDTO;
+import com.artino.service.dto.admin.*;
 import com.artino.service.entity.*;
 import com.artino.service.services.IAdminService;
 import com.artino.service.services.base.AdminServiceBase;
@@ -14,13 +11,11 @@ import com.artino.service.services.base.ConfigServiceBase;
 import com.artino.service.services.base.RoleServiceBase;
 import com.artino.service.utils.*;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
-import com.artino.service.vo.admin.res.AdminMenuListResVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +40,7 @@ public class AdminServiceImpl implements IAdminService {
     private ConfigServiceBase configServiceBase;
 
     @Override
+    @Transactional
     public boolean adminCreate(AdminCreateDTO dto) {
         adminServiceBase.accountIsOk(dto.getAccount());
         TCode code = TCode.builder()
@@ -57,7 +53,7 @@ public class AdminServiceImpl implements IAdminService {
         if (adminExists) throw BusinessException.build(110003, "账号已被注册");
         TAdmin admin = TAdmin.builder()
                 .id(IDUtils.shared().nextId())
-                .nickName(StringUtils.isEmpty(dto.getNickName()) ? RandomUtils.getChineseName(0) : dto.getNickName())
+                .nickName(StringUtils.isEmpty(dto.getNickName()) ? RandomUtils.getRandomName(0) : dto.getNickName())
                 .openId(CryptoUtils.base64Encode(RandomUtils.uuid()))
                 .unionId(CryptoUtils.base64Encode(RandomUtils.uuid()))
                 .createdAt(DateUtils.getTime())
@@ -67,7 +63,11 @@ public class AdminServiceImpl implements IAdminService {
         if (isEmail) admin.setEmail(dto.getAccount());
         else admin.setPhone(dto.getAccount());
         admin.setPassword(CryptoUtils.encryptPassword(dto.getPassword(), admin.getId()));
-        return adminServiceBase.newAdmin(admin);
+        Long roleId = configServiceBase.findDevelop().getValue();
+        adminServiceBase.newAdmin(admin);
+        TAdminRole adminRole = TAdminRole.builder().adminId(admin.getId()).roleId(roleId).build();
+        adminServiceBase.batchInsertAdminRole(List.of(adminRole));
+        return true;
     }
 
     @Override
@@ -101,6 +101,7 @@ public class AdminServiceImpl implements IAdminService {
     }
 
     @Override
+    @Transactional
     public AdminLoginResVO codeLogin(AdminCodeLoginDTO dto) {
         adminServiceBase.accountIsOk(dto.getAccount());
         TCode code = TCode.builder()
@@ -113,7 +114,7 @@ public class AdminServiceImpl implements IAdminService {
         if (Objects.isNull(admin)) {
             admin = TAdmin.builder()
                     .id(IDUtils.shared().nextId())
-                    .nickName(RandomUtils.getChineseName(0))
+                    .nickName(RandomUtils.getRandomName(0))
                     .openId(CryptoUtils.base64Encode(RandomUtils.uuid()))
                     .unionId(CryptoUtils.base64Encode(RandomUtils.uuid()))
                     .createdAt(DateUtils.getTime())
@@ -123,12 +124,15 @@ public class AdminServiceImpl implements IAdminService {
             if (isEmail) admin.setEmail(dto.getAccount());
             else admin.setPhone(dto.getAccount());
             admin.setPassword(CryptoUtils.encryptPassword(RandomUtils.randomStr(10), admin.getId()));
+            Long roleId = configServiceBase.findDevelop().getValue();
+            TAdminRole adminRole = TAdminRole.builder().adminId(admin.getId()).roleId(roleId).build();
+            adminServiceBase.batchInsertAdminRole(List.of(adminRole));
             boolean isOk = adminServiceBase.newAdmin(admin);
             if (!isOk) throw BusinessException.build(110001, "验证码登录失败，请重试");
             admin = adminServiceBase.getAdminById(admin.getId());
         }
         if (admin.getStatus() == TAdmin.EStatus.FREEZE)
-            throw BusinessException.build(110001, "帐户已被冻结");
+            throw BusinessException.build(110002, "帐户已被冻结");
         return adminServiceBase.processResult(admin, null);
     }
 
@@ -172,5 +176,39 @@ public class AdminServiceImpl implements IAdminService {
             ).toList();
             return adminServiceBase.batchInsertAdminRole(list);
         }
+    }
+
+    @Override
+    public String newQrcode() {
+        int minute = 3;
+        Long expiredAt = DateUtils.after(minute).getTime();
+        QRCodeDTO dto = QRCodeDTO.builder()
+                .expiredAt(expiredAt)
+                .token(RandomUtils.uuid())
+                .type(QRCodeDTO.EType.LOGIN)
+                .build();
+        Environment env = SpringUtils.getBean(Environment.class);
+        String key = env.getProperty("constant.verify.key", "");
+        RedisUtils.set(KeyUtils.getCodeKey(dto.getToken()), dto, minute + 1, TimeUnit.MINUTES);
+        return CryptoUtils.desEncode(JSON.stringify(dto), key);
+    }
+
+    @Override
+    public Object scanInfo(String token) {
+        String key = KeyUtils.getCodeKey(token);
+        QRCodeDTO codeInfo = RedisUtils.get(key, QRCodeDTO.class);
+        if (Objects.isNull(codeInfo))
+            throw BusinessException.build(110001, "二维码信息不存在或已过期");
+        if (codeInfo.getExpiredAt() < DateUtils.timeSpan())
+            throw BusinessException.build(110001, "二维码信息不存在或已过期");
+        if (Objects.isNull(codeInfo.getData())) return null;
+        if (codeInfo.getType() == QRCodeDTO.EType.LOGIN) {
+            Long adminId = (Long) codeInfo.getData();
+            TAdmin admin = adminServiceBase.getAdminById(adminId);
+            if (admin.getStatus() == TAdmin.EStatus.FREEZE)
+                throw BusinessException.build(110003, "帐户已被冻结");
+            return adminServiceBase.processResult(admin, null);
+        }
+        throw BusinessException.build(110009, "无法处理此数据");
     }
 }

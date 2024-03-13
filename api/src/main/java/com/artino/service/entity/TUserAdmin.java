@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TRoleMenu {
+public class TUserAdmin {
     /**
-     * 角色id
+     * 用户id
      */
-    private Long roleId;
+    private Long userId;
     /**
-     * 菜单id
+     * 管理员id
      */
-    private Long menuId;
+    private Long adminId;
 }

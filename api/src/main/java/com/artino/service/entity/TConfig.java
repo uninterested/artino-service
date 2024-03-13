@@ -4,11 +4,15 @@ import com.artino.service.base.R;
 import com.artino.service.common.EYesNo;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TConfig {
     /**
      * id
@@ -48,7 +52,11 @@ public class TConfig {
         /**
          * 帐户注册
          */
-        ROLE(0, "ROLE");
+        ROLE(0, "ROLE"),
+        /**
+         * 小程序配置
+         */
+        MINICONFIG(1, "MINICONFIG");
 
         @JsonValue
         public final Integer value;

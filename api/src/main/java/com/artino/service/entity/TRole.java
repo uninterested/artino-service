@@ -2,11 +2,15 @@ package com.artino.service.entity;
 
 import com.artino.service.common.EDeleted;
 import com.artino.service.common.EYesNo;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TRole {
     /**
      * ID
