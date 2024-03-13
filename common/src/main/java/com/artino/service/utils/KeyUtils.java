@@ -24,7 +24,7 @@ public class KeyUtils {
     }
 
     /**
-     * 获取用户token的key
+     * 获取Admin用户token的key
      *
      * @param token token
      * @return key
@@ -32,5 +32,25 @@ public class KeyUtils {
     public static String getTokenKey(String token) {
         String Terminal = ServletUtils.currentRequest().getHeader("Terminal");
         return String.format("token.%s.%s", Objects.isNull(Terminal) ? "App" : Terminal, token);
+    }
+
+    /**
+     * 获取User用户token的key
+     *
+     * @param token token
+     * @return key
+     */
+    public static String getUserTokenKey(String token) {
+        String Terminal = ServletUtils.currentRequest().getHeader("Terminal");
+        return String.format("user.token.%s.%s", Objects.isNull(Terminal) ? "App" : Terminal, token);
+    }
+
+    /**
+     * 二维码的key。用于扫码登录
+     * @param uuid
+     * @return
+     */
+    public static String getCodeKey(String uuid) {
+        return String.format("qrcode.%s", uuid);
     }
 }

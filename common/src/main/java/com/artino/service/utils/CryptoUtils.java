@@ -1,6 +1,13 @@
 package com.artino.service.utils;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -62,6 +69,50 @@ public class CryptoUtils {
      */
     public static String md5Encode(final String input) {
         return md5Encode(input, false);
+    }
+
+    /**
+     * des 加密
+     * @param input
+     * @param secret
+     * @return
+     */
+    public static String desEncode(final String input, final String secret) {
+        try {
+            String md5 = md5Encode(secret).toLowerCase();
+            DESKeySpec desKeySpec = new DESKeySpec(md5.getBytes(StandardCharsets.UTF_8));
+            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+            SecretKey key = keyFactory.generateSecret(desKeySpec);
+
+            Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] encryptedBytes = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(encryptedBytes);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * des 解密
+     * @param input
+     * @param secret
+     * @return
+     */
+    public static String desDecode(final String input, final String secret) {
+        try{
+            String md5 = md5Encode(secret).toLowerCase();
+            DESKeySpec desKeySpec = new DESKeySpec(md5.getBytes(StandardCharsets.UTF_8));
+            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+            SecretKey key = keyFactory.generateSecret(desKeySpec);
+            Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] decode = Base64.getDecoder().decode(input);
+            byte[] decipherByte = cipher.doFinal(decode);
+            return new String(decipherByte);
+        }catch (Exception e) {
+            return null;
+        }
     }
 
     public static String md5Encode(final String input, final boolean origin) {

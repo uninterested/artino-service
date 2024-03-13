@@ -14,6 +14,7 @@ import java.util.Objects;
 @Service
 public class ConfigServiceBase {
     private final String adminString = "超级管理员";
+    private final String developString = "开发者";
 
     @Autowired
     @Lazy
@@ -23,9 +24,19 @@ public class ConfigServiceBase {
         return configMapper.findListWith(roleIds);
     }
 
+    public TConfig findDevelop() {
+        return configMapper.findOne(
+                TConfig.builder()
+                        .type(TConfig.EType.ROLE)
+                        .label(developString)
+                        .build()
+        );
+    }
+
     public TConfig findAdmin() {
         return configMapper.findOne(
                 TConfig.builder()
+                        .type(TConfig.EType.ROLE)
                         .label(adminString)
                         .build()
         );

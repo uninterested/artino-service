@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.artino.service.mapper.AdminMapper">
-    <resultMap id="TAdminMap" type="com.artino.service.entity.TAdmin">
+<mapper namespace="com.artino.service.mapper.UserMapper">
+    <resultMap id="TUserMap" type="com.artino.service.entity.TUser">
         <result property="id" column="id" />
         <result property="nickName" column="nick_name" />
         <result property="email" column="email" />
@@ -14,12 +14,11 @@
         <result property="unionId" column="union_id" />
         <result property="remark" column="remark" />
         <result property="createdAt" column="created_at" />
-        <result property="createdBy" column="created_by" />
         <result property="status" column="status" />
         <result property="deleted" column="deleted" />
     </resultMap>
     <sql id="queryAll">
-        select * from t_admin
+        select * from t_user
     </sql>
     <sql id="whereWithCondition">
         <where>
@@ -36,13 +35,12 @@
             <if test="unionId != null">and `union_id` = #{unionId}</if>
             <if test="remark != null">and `remark` = #{remark}</if>
             <if test="createdAt != null">and `created_at` = #{createdAt}</if>
-            <if test="createdBy != null">and `created_by` = #{createdBy}</if>
             <if test="status != null">and `status` = #{status}</if>
             and `deleted` = 0
         </where>
     </sql>
     <insert id="insert" parameterType="com.artino.service.entity.TAdmin">
-        insert into t_admin (
+        insert into t_user (
         <trim suffix="" suffixOverrides=",">
             <if test="id != null">`id`,</if>
             <if test="nickName != null">`nick_name`,</if>
@@ -56,7 +54,6 @@
             <if test="unionId != null">`union_id`,</if>
             <if test="remark != null">`remark`,</if>
             <if test="createdAt != null">`created_at`,</if>
-            <if test="createdBy != null">`created_by`,</if>
             <if test="status != null">`status`,</if>
             <if test="deleted != null">`deleted`,</if>
         </trim>
@@ -74,14 +71,13 @@
             <if test="unionId != null">#{unionId},</if>
             <if test="remark != null">#{remark},</if>
             <if test="createdAt != null">#{createdAt},</if>
-            <if test="createdBy != null">#{createdBy},</if>
             <if test="status != null">#{status},</if>
             <if test="deleted != null">#{deleted},</if>
         </trim>
         )
     </insert>
     <update id="update" parameterType="com.artino.service.entity.TAdmin">
-        update t_admin
+        update t_user
         <set>
             <trim suffix="" suffixOverrides=",">
                 id = #{id},
@@ -97,23 +93,22 @@
                 <if test="unionId != null">`union_id` = #{unionId},</if>
                 <if test="remark != null">`remark` = #{remark},</if>
                 <if test="createdAt != null">`created_at` = #{createdAt},</if>
-                <if test="createdBy != null">`created_by` = #{createdBy},</if>
                 <if test="status != null">`status` = #{status},</if>
                 <if test="deleted != null">`deleted` = #{deleted},</if>
             </trim>
         </set>
         where id = #{id}
     </update>
-    <select id="findList" parameterType="com.artino.service.entity.TAdmin" resultMap="TAdminMap">
+    <select id="findList" parameterType="com.artino.service.entity.TAdmin" resultMap="TUserMap">
         <include refid="queryAll" />
         <include refid="whereWithCondition" />
     </select>
-    <select id="findOne" parameterType="com.artino.service.entity.TAdmin" resultMap="TAdminMap">
+    <select id="findOne" parameterType="com.artino.service.entity.TAdmin" resultMap="TUserMap">
         <include refid="queryAll" />
         <include refid="whereWithCondition" />
         limit 0,1
     </select>
-    <select id="findListWith" parameterType="List" resultMap="TAdminMap">
+    <select id="findListWith" parameterType="List" resultMap="TUserMap">
         <include refid="queryAll" />
         <where>
             and `deleted` = 0
@@ -125,19 +120,10 @@
             </if>
         </where>
     </select>
-    <delete id="deleteListByUserId" parameterType="Long">
-        delete from `t_admin_role`
-        <where>
-            1 = 1
-            <if test="adminId != null">
-                and `admin_id` = #{adminId}
-            </if>
-        </where>
-    </delete>
-    <insert id="batchInsertAdminRole" parameterType="com.artino.service.entity.TAdminRole">
-        insert into `t_admin_role` (`admin_id`,`role_id`) values
+    <insert id="batchInsertUserAdmin" parameterType="com.artino.service.entity.TAdminRole">
+        insert into `t_user_admin` (`user_id`,`admin_id`) values
         <foreach collection="list" separator="," item="item">
-            (#{item.adminId}, #{item.roleId})
+            (#{item.userId}, #{item.adminId})
         </foreach>
     </insert>
 

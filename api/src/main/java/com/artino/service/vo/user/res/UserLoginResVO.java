@@ -1,8 +1,7 @@
-package com.artino.service.vo.admin.res;
+package com.artino.service.vo.user.res;
 
 import com.artino.service.common.ESex;
 import com.artino.service.desensitization.Desensitization;
-import com.artino.service.entity.TAdmin;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -12,10 +11,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @ApiModel("用户登录返回信息")
-public class AdminLoginResVO {
+public class UserLoginResVO {
     @ApiModelProperty("用户ID")
     private Long id;
     @ApiModelProperty("昵称")

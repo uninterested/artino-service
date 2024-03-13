@@ -49,4 +49,17 @@ public interface IAdminService {
      * @return 是否绑定成功
      */
     boolean setRole(SetRoleDTO dto);
+
+    /**
+     * 生成登录的二维码
+     * @return
+     */
+    String newQrcode();
+
+    /**
+     * 扫码登录
+     * @param token 票据
+     * @return
+     */
+    Object scanInfo(String token);
 }

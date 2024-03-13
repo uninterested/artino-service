@@ -3,7 +3,6 @@ package com.artino.service.entity;
 import com.artino.service.base.R;
 import com.artino.service.common.EDeleted;
 import com.artino.service.common.ESex;
-import com.artino.service.common.EYesNo;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TAdmin {
+public class TUser {
     /**
      * id
      */
@@ -65,13 +64,9 @@ public class TAdmin {
      */
     private String createdAt;
     /**
-     * 创建人
-     */
-    private Long createdBy;
-    /**
      * 状态
      */
-    private EStatus status;
+    private TAdmin.EStatus status;
     /**
      * 是否已删除
      */
