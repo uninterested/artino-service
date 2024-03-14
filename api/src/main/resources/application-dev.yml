@@ -71,4 +71,4 @@ constant:
   login:
     token: X-Token #token name
     times: 5 #登录错误次数锁定
-    single: false #是否单点登录 0:不是 1:是
+    single: true #是否单点登录 0:不是 1:是

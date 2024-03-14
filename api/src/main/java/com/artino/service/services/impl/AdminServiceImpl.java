@@ -170,13 +170,18 @@ public class AdminServiceImpl implements IAdminService {
     }
 
     @Override
-    public String newQrcode() {
-        int minute = 3;
+    public String newQrcode(QRCodeDTO.EType type) {
+        int minute = configServiceBase.findConfig(
+                TConfig.builder()
+                        .label(ConfigServiceBase.KQRCODEEXIPRED)
+                        .type(TConfig.EType.QRCODE)
+                        .build()
+        ).getValue().intValue();
         Long expiredAt = DateUtils.after(minute).getTime();
         QRCodeDTO dto = QRCodeDTO.builder()
                 .expiredAt(expiredAt)
                 .token(RandomUtils.uuid())
-                .type(QRCodeDTO.EType.SWITCHADMIN)
+                .type(type)
                 .build();
         Environment env = SpringUtils.getBean(Environment.class);
         String key = env.getProperty("constant.verify.key", "");
@@ -189,9 +194,9 @@ public class AdminServiceImpl implements IAdminService {
         String key = KeyUtils.getCodeKey(token);
         QRCodeDTO codeInfo = RedisUtils.get(key, QRCodeDTO.class);
         if (Objects.isNull(codeInfo))
-            throw BusinessException.build(110001, "二维码信息不存在或已过期");
+            throw BusinessException.build(110001, "二维码信息不存在");
         if (codeInfo.getExpiredAt() < DateUtils.timeSpan())
-            throw BusinessException.build(110001, "二维码信息不存在或已过期");
+            throw BusinessException.build(110002, "二维码已过期");
         if (Objects.isNull(codeInfo.getData())) return null;
         if (codeInfo.getType() == QRCodeDTO.EType.SWITCHADMIN) {
             Long adminId = Long.parseLong((String) codeInfo.getData());

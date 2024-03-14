@@ -13,8 +13,19 @@ import java.util.Objects;
 
 @Service
 public class ConfigServiceBase {
-    private final String adminString = "超级管理员";
-    private final String developString = "开发者";
+    /**
+     * 用户角色 - 超级管理员
+     */
+    public static final String KAdminString = "超级管理员";
+    /**
+     * 用户角色 - 开发者
+     */
+    public static final String KDevelopString = "开发者";
+
+    /**
+     * 小程序二维码的有效期
+     */
+    public final static String KQRCODEEXIPRED = "生成二维码的有效期";
 
     @Autowired
     @Lazy
@@ -24,11 +35,15 @@ public class ConfigServiceBase {
         return configMapper.findListWith(roleIds);
     }
 
+    public TConfig findConfig(TConfig entity) {
+        return configMapper.findOne(entity);
+    }
+
     public TConfig findDevelop() {
         return configMapper.findOne(
                 TConfig.builder()
                         .type(TConfig.EType.ROLE)
-                        .label(developString)
+                        .label(KDevelopString)
                         .build()
         );
     }
@@ -37,7 +52,7 @@ public class ConfigServiceBase {
         return configMapper.findOne(
                 TConfig.builder()
                         .type(TConfig.EType.ROLE)
-                        .label(adminString)
+                        .label(KAdminString)
                         .build()
         );
     }
@@ -50,7 +65,7 @@ public class ConfigServiceBase {
     public Long getAdminId(List<TConfig> list) {
         if (Objects.isNull(list) || list.isEmpty()) return null;
         for (TConfig config : list) {
-            if (config.getLabel().equals(adminString))
+            if (config.getLabel().equals(KAdminString))
                 return config.getValue();
         }
         return null;

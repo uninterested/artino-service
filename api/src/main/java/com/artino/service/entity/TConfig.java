@@ -56,7 +56,11 @@ public class TConfig {
         /**
          * 小程序配置
          */
-        MINICONFIG(1, "MINICONFIG");
+        MINICONFIG(1, "MINICONFIG"),
+        /**
+         *二维码
+         */
+        QRCODE(2, "QRCODE");
 
         @JsonValue
         public final Integer value;

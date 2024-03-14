@@ -3,10 +3,7 @@ package com.artino.service.controller;
 import com.artino.service.annotation.Frequency;
 import com.artino.service.annotation.LoginRequired;
 import com.artino.service.base.R;
-import com.artino.service.dto.admin.AdminCodeLoginDTO;
-import com.artino.service.dto.admin.AdminCreateDTO;
-import com.artino.service.dto.admin.AdminLoginDTO;
-import com.artino.service.dto.admin.SetRoleDTO;
+import com.artino.service.dto.admin.*;
 import com.artino.service.services.IAdminService;
 import com.artino.service.validator.required.Required;
 import com.artino.service.vo.admin.req.AdminCreateVO;
@@ -102,11 +99,11 @@ public class AdminController {
     @ApiOperation("生成二维码")
     @Frequency(type = Frequency.Type.FP, time = 60, count = 5)
     public R<String> newQrcode() {
-        String result = adminService.newQrcode();
+        String result = adminService.newQrcode(QRCodeDTO.EType.SWITCHADMIN);
         return R.success(result);
     }
 
-    @GetMapping("/scan/{token}")
+    @GetMapping("/qrcode/info/{token}")
     @ApiOperation("检测C端的用户有没有扫码绑定")
     public R<Object> scanInfo(@PathVariable String token) {
         Object result = adminService.scanInfo(token);

@@ -1,9 +1,6 @@
 package com.artino.service.services;
 
-import com.artino.service.dto.admin.AdminCodeLoginDTO;
-import com.artino.service.dto.admin.AdminCreateDTO;
-import com.artino.service.dto.admin.AdminLoginDTO;
-import com.artino.service.dto.admin.SetRoleDTO;
+import com.artino.service.dto.admin.*;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
 import com.artino.service.vo.admin.res.AdminMenuListResVO;
 
@@ -54,7 +51,7 @@ public interface IAdminService {
      * 生成登录的二维码
      * @return
      */
-    String newQrcode();
+    String newQrcode(QRCodeDTO.EType type);
 
     /**
      * 扫码登录

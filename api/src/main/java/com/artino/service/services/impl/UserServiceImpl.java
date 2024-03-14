@@ -168,6 +168,7 @@ public class UserServiceImpl implements IUserService {
                     TUserAdmin.builder()
                             .userId(userId)
                             .adminId(admin.getId())
+                            .permission(TUserAdmin.EPermission.OWNER)
                             .build()
             );
             userServiceBase.batchInsertUserAdmin(relationship);
@@ -183,7 +184,8 @@ public class UserServiceImpl implements IUserService {
         if (Objects.isNull(qrcode) || qrcode.getExpiredAt() < DateUtils.timeSpan())
             throw BusinessException.build(110001, "验证码不存在或者已过期");
         qrcode.setData(dto.getData());
-        RedisUtils.set(key, qrcode);
+        long next = (qrcode.getExpiredAt() - DateUtils.timeSpan()) / 1000 / 60;
+        RedisUtils.set(key, qrcode, next + 1, TimeUnit.MINUTES);
         return true;
     }
 }
