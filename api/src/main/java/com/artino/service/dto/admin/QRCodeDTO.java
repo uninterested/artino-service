@@ -37,7 +37,7 @@ public class QRCodeDTO {
         /**
          * 登录二维码
          */
-        LOGIN(110000, "LOGIN");
+        SWITCHADMIN(110000, "SWITCHADMIN");
 
         @JsonValue
         public final Integer value;

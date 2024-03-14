@@ -5,10 +5,7 @@ import com.artino.service.context.RequestContext;
 import com.artino.service.dto.admin.*;
 import com.artino.service.entity.*;
 import com.artino.service.services.IAdminService;
-import com.artino.service.services.base.AdminServiceBase;
-import com.artino.service.services.base.CodeServiceBase;
-import com.artino.service.services.base.ConfigServiceBase;
-import com.artino.service.services.base.RoleServiceBase;
+import com.artino.service.services.base.*;
 import com.artino.service.utils.*;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -63,10 +61,7 @@ public class AdminServiceImpl implements IAdminService {
         if (isEmail) admin.setEmail(dto.getAccount());
         else admin.setPhone(dto.getAccount());
         admin.setPassword(CryptoUtils.encryptPassword(dto.getPassword(), admin.getId()));
-        Long roleId = configServiceBase.findDevelop().getValue();
-        adminServiceBase.newAdmin(admin);
-        TAdminRole adminRole = TAdminRole.builder().adminId(admin.getId()).roleId(roleId).build();
-        adminServiceBase.batchInsertAdminRole(List.of(adminRole));
+        adminServiceBase.saveAdminAndRoleAndMini(admin);
         return true;
     }
 
@@ -124,11 +119,7 @@ public class AdminServiceImpl implements IAdminService {
             if (isEmail) admin.setEmail(dto.getAccount());
             else admin.setPhone(dto.getAccount());
             admin.setPassword(CryptoUtils.encryptPassword(RandomUtils.randomStr(10), admin.getId()));
-            Long roleId = configServiceBase.findDevelop().getValue();
-            TAdminRole adminRole = TAdminRole.builder().adminId(admin.getId()).roleId(roleId).build();
-            adminServiceBase.batchInsertAdminRole(List.of(adminRole));
-            boolean isOk = adminServiceBase.newAdmin(admin);
-            if (!isOk) throw BusinessException.build(110001, "验证码登录失败，请重试");
+            adminServiceBase.saveAdminAndRoleAndMini(admin);
             admin = adminServiceBase.getAdminById(admin.getId());
         }
         if (admin.getStatus() == TAdmin.EStatus.FREEZE)
@@ -185,11 +176,11 @@ public class AdminServiceImpl implements IAdminService {
         QRCodeDTO dto = QRCodeDTO.builder()
                 .expiredAt(expiredAt)
                 .token(RandomUtils.uuid())
-                .type(QRCodeDTO.EType.LOGIN)
+                .type(QRCodeDTO.EType.SWITCHADMIN)
                 .build();
         Environment env = SpringUtils.getBean(Environment.class);
         String key = env.getProperty("constant.verify.key", "");
-        RedisUtils.set(KeyUtils.getCodeKey(dto.getToken()), dto, minute + 1, TimeUnit.MINUTES);
+        RedisUtils.set(KeyUtils.getCodeKey(dto.getToken()), dto, (minute + 1), TimeUnit.MINUTES);
         return CryptoUtils.desEncode(JSON.stringify(dto), key);
     }
 
@@ -202,8 +193,8 @@ public class AdminServiceImpl implements IAdminService {
         if (codeInfo.getExpiredAt() < DateUtils.timeSpan())
             throw BusinessException.build(110001, "二维码信息不存在或已过期");
         if (Objects.isNull(codeInfo.getData())) return null;
-        if (codeInfo.getType() == QRCodeDTO.EType.LOGIN) {
-            Long adminId = (Long) codeInfo.getData();
+        if (codeInfo.getType() == QRCodeDTO.EType.SWITCHADMIN) {
+            Long adminId = Long.parseLong((String) codeInfo.getData());
             TAdmin admin = adminServiceBase.getAdminById(adminId);
             if (admin.getStatus() == TAdmin.EStatus.FREEZE)
                 throw BusinessException.build(110003, "帐户已被冻结");

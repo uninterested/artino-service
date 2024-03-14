@@ -1,8 +1,11 @@
 package com.artino.service.services.base;
 
+import com.artino.service.dto.user.UserAdminMiniDTO;
 import com.artino.service.entity.TUser;
+import com.artino.service.entity.TUserAdmin;
 import com.artino.service.mapper.UserMapper;
 import com.artino.service.utils.*;
+import com.artino.service.vo.user.res.AdminsResVO;
 import com.artino.service.vo.user.res.UserLoginResVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -23,6 +26,7 @@ public class UserServiceBase {
 
     /**
      * 新增用户
+     *
      * @param entity
      * @return
      */
@@ -40,6 +44,16 @@ public class UserServiceBase {
         boolean isEmail = RegexUtils.isEmail(account);
         if (isEmail) return Objects.nonNull(userMapper.findByEmail(account));
         else return Objects.nonNull(userMapper.findByPhone(account));
+    }
+
+    /**
+     * 获取当前用户关联的管理端
+     *
+     * @param userId 用户id
+     * @return list
+     */
+    public List<UserAdminMiniDTO> findUserAdminMini(Long userId) {
+        return userMapper.findUserAdminMini(userId);
     }
 
     /**
@@ -93,6 +107,15 @@ public class UserServiceBase {
     }
 
     /**
+     * 批量插入用户-管理员关系
+     * @param list list
+     * @return 是否成功
+     */
+    public boolean batchInsertUserAdmin(List<TUserAdmin> list) {
+        return userMapper.batchInsertUserAdmin(list) > 0;
+    }
+
+    /**
      * 根据id获取用户信息
      *
      * @param id 用户id
@@ -114,7 +137,7 @@ public class UserServiceBase {
     /**
      * 格式化返回的数据格式
      *
-     * @param user user model
+     * @param user    user model
      * @param lockKey 锁定的key
      * @return 登录信息
      */

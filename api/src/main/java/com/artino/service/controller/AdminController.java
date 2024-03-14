@@ -1,5 +1,6 @@
 package com.artino.service.controller;
 
+import com.artino.service.annotation.Frequency;
 import com.artino.service.annotation.LoginRequired;
 import com.artino.service.base.R;
 import com.artino.service.dto.admin.AdminCodeLoginDTO;
@@ -99,6 +100,7 @@ public class AdminController {
 
     @GetMapping("/qrcode")
     @ApiOperation("生成二维码")
+    @Frequency(type = Frequency.Type.FP, time = 60, count = 5)
     public R<String> newQrcode() {
         String result = adminService.newQrcode();
         return R.success(result);

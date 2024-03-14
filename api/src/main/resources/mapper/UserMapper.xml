@@ -17,6 +17,10 @@
         <result property="status" column="status" />
         <result property="deleted" column="deleted" />
     </resultMap>
+    <resultMap id="TUserAdminsMap" type="com.artino.service.dto.user.UserAdminMiniDTO" extends="TUserMap">
+        <result property="miniName" column="name" />
+        <result property="miniIcon" column="icon" />
+    </resultMap>
     <sql id="queryAll">
         select * from t_user
     </sql>
@@ -120,11 +124,20 @@
             </if>
         </where>
     </select>
-    <insert id="batchInsertUserAdmin" parameterType="com.artino.service.entity.TAdminRole">
+    <insert id="batchInsertUserAdmin" parameterType="com.artino.service.entity.TUserAdmin">
         insert into `t_user_admin` (`user_id`,`admin_id`) values
         <foreach collection="list" separator="," item="item">
             (#{item.userId}, #{item.adminId})
         </foreach>
     </insert>
-
+    <select id="findUserAdminMini" parameterType="Long" resultMap="TUserAdminsMap">
+        select t2.*, t3.name, t3.icon from t_user_admin t1 inner join t_admin t2
+        on t1.admin_id = t2.id inner join t_mini t3 on t2.id = t3.admin_id
+        <where>
+            and t2.`status` = 0
+            and t2.`deleted` = 0
+            and t3.`status` = 0
+            and t3.`deleted` = 0
+        </where>
+    </select>
 </mapper>

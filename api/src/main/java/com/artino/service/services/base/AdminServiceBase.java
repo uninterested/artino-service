@@ -2,8 +2,10 @@ package com.artino.service.services.base;
 
 
 import com.artino.service.base.BusinessException;
+import com.artino.service.common.EYesNo;
 import com.artino.service.entity.TAdmin;
 import com.artino.service.entity.TAdminRole;
+import com.artino.service.entity.TMini;
 import com.artino.service.mapper.AdminMapper;
 import com.artino.service.utils.*;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
@@ -23,8 +25,17 @@ public class AdminServiceBase {
     @Lazy
     private AdminMapper adminMapper;
 
+    @Autowired
+    @Lazy
+    private MiniServiceBase miniServiceBase;
+
+    @Autowired
+    @Lazy
+    private ConfigServiceBase configServiceBase;
+
     /**
      * 新增管理员
+     *
      * @param admin model
      * @return 是否新增成功
      */
@@ -46,16 +57,30 @@ public class AdminServiceBase {
 
     /**
      * 删除用户的权限
+     *
      * @param userId 用户id
      * @return is ok
      */
     public boolean deleteListByUserId(Long userId) {
-        if (Objects.isNull(userId) || userId <=0) return false;
+        if (Objects.isNull(userId) || userId <= 0) return false;
         return adminMapper.deleteListByUserId(userId) > 0;
     }
 
     /**
+     * 自动插入管理员-角色-小程序
+     * @param admin
+     */
+    public void saveAdminAndRoleAndMini(TAdmin admin) {
+        Long roleId = configServiceBase.findDevelop().getValue();
+        TAdminRole adminRole = TAdminRole.builder().adminId(admin.getId()).roleId(roleId).build();
+        batchInsertAdminRole(List.of(adminRole));
+        newAdmin(admin);
+        linkMini(admin);
+    }
+
+    /**
      * 批量插入用户-角色数
+     *
      * @param list list
      * @return is ok
      */
@@ -158,6 +183,31 @@ public class AdminServiceBase {
         loginOutIfNeed(admin);
         syncTokenToHeader(admin);
         return CopyUtils.copy(admin, AdminLoginResVO.class);
+    }
+
+    /**
+     * 自动创建小程序
+     *
+     * @param admin admin model
+     * @return
+     */
+    public boolean linkMini(TAdmin admin) {
+        TMini mini = TMini.builder()
+                .id(IDUtils.shared().nextId())
+                .name("测试小程序")
+                .adminId(admin.getId())
+                .icon(admin.getAvatar())
+                .miniCode("")
+                .appId("at" + RandomUtils.randomStr(16))
+                .appSecret(RandomUtils.randomStr(24))
+                .originId("gh_" + RandomUtils.randomStr(16))
+                .requestList("[]")
+                .socketList("[]")
+                .uploadList("[]")
+                .downloadList("[]")
+                .createdAt(DateUtils.getTime())
+                .build();
+        return miniServiceBase.insert(mini);
     }
 
     // ======= private =======

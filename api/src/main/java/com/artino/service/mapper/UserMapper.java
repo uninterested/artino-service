@@ -1,7 +1,9 @@
 package com.artino.service.mapper;
 
+import com.artino.service.dto.user.UserAdminMiniDTO;
 import com.artino.service.entity.TUser;
 import com.artino.service.entity.TUserAdmin;
+import com.artino.service.vo.user.res.AdminsResVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,6 +45,13 @@ public interface UserMapper {
      * @return model
      */
     TUser findOne(TUser entity);
+
+    /**
+     * 获取当前用户关联的管理端
+     * @param userId 用户id
+     * @return list
+     */
+    List<UserAdminMiniDTO> findUserAdminMini(Long userId);
 
     /**
      * 查询指定id 的用户

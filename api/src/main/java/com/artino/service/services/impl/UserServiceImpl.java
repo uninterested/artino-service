@@ -2,24 +2,27 @@ package com.artino.service.services.impl;
 
 import com.artino.service.base.BusinessException;
 import com.artino.service.context.RequestContext;
-import com.artino.service.dto.user.NewUserDTO;
-import com.artino.service.dto.user.UserCodeLoginDTO;
-import com.artino.service.dto.user.UserLoginDTO;
+import com.artino.service.dto.admin.QRCodeDTO;
+import com.artino.service.dto.user.*;
 import com.artino.service.entity.TAdmin;
 import com.artino.service.entity.TCode;
 import com.artino.service.entity.TUser;
+import com.artino.service.entity.TUserAdmin;
 import com.artino.service.services.IUserService;
 import com.artino.service.services.base.AdminServiceBase;
 import com.artino.service.services.base.CodeServiceBase;
 import com.artino.service.services.base.UserServiceBase;
 import com.artino.service.utils.*;
 import com.artino.service.vo.admin.res.AdminLoginResVO;
+import com.artino.service.vo.user.res.AdminsResVO;
 import com.artino.service.vo.user.res.UserLoginResVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -130,6 +133,57 @@ public class UserServiceImpl implements IUserService {
         String tokenKey = env.getProperty("constant.login.token", "X-Token");
         String token = ServletUtils.currentRequest().getHeader(tokenKey);
         if (StringUtils.isNotEmpty(token)) RedisUtils.del(KeyUtils.getUserTokenKey(token));
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public List<AdminsResVO> admins() {
+        Long userId = RequestContext.get().getUid();
+        TUser user = userServiceBase.getUserById(userId);
+        if (Objects.isNull(user) || user.getStatus() == TAdmin.EStatus.FREEZE)
+            throw BusinessException.build(110001, "用户不存在或已冻结");
+        List<UserAdminMiniDTO> list = userServiceBase.findUserAdminMini(userId);
+        if (Objects.isNull(list) || list.isEmpty()) {
+            TAdmin admin = TAdmin.builder()
+                    .id(IDUtils.shared().nextId())
+                    .nickName(user.getNickName())
+                    .avatar(user.getAvatar())
+                    .sex(user.getSex())
+                    .openId(CryptoUtils.base64Encode(RandomUtils.uuid()))
+                    .unionId(CryptoUtils.base64Encode(RandomUtils.uuid()))
+                    .createdAt(DateUtils.getTime())
+                    .createdBy(0L)
+                    .build();
+            if (StringUtils.isNotEmpty(user.getPhone())) {
+                TAdmin find = adminServiceBase.getAdminByPhone(user.getPhone());
+                if (Objects.isNull(find)) admin.setPhone(user.getPhone());
+            }
+            if (StringUtils.isNotEmpty(user.getEmail())) {
+                TAdmin find = adminServiceBase.getAdminByEmail(user.getEmail());
+                if (Objects.isNull(find)) admin.setEmail(user.getEmail());
+            }
+            adminServiceBase.saveAdminAndRoleAndMini(admin);
+            List<TUserAdmin> relationship = List.of(
+                    TUserAdmin.builder()
+                            .userId(userId)
+                            .adminId(admin.getId())
+                            .build()
+            );
+            userServiceBase.batchInsertUserAdmin(relationship);
+            list = userServiceBase.findUserAdminMini(userId);
+        }
+        return list.stream().map(e -> CopyUtils.copy(e, AdminsResVO.class)).toList();
+    }
+
+    @Override
+    public boolean scanQRCode(ScanQRCodeDTO dto) {
+        String key = KeyUtils.getCodeKey(dto.getToken());
+        QRCodeDTO qrcode = RedisUtils.get(key, QRCodeDTO.class);
+        if (Objects.isNull(qrcode) || qrcode.getExpiredAt() < DateUtils.timeSpan())
+            throw BusinessException.build(110001, "验证码不存在或者已过期");
+        qrcode.setData(dto.getData());
+        RedisUtils.set(key, qrcode);
         return true;
     }
 }
